@@ -36,10 +36,16 @@ async def health_check():
         "environment": settings.ENVIRONMENT,
     }
 
-# Include routers (will add later)
-# from app.api import auth, businesses, strategies, content, social, analytics, billing
-# app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
-# app.include_router(businesses.router, prefix="/api/v1/businesses", tags=["businesses"])
+# Include routers
+from app.api import users, businesses
+
+app.include_router(users.router, prefix="/api/v1")
+app.include_router(businesses.router, prefix="/api/v1")
+
+# Additional routers to add later:
+# from app.api import strategies, content, social, analytics, billing
+# app.include_router(strategies.router, prefix="/api/v1")
+# app.include_router(content.router, prefix="/api/v1")
 # etc...
 
 if __name__ == "__main__":

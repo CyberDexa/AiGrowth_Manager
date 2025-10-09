@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     # Clerk
     CLERK_SECRET_KEY: str = ""
     CLERK_WEBHOOK_SECRET: str = ""
+    CLERK_DOMAIN: str = "romantic-lemming-17.clerk.accounts.dev"
     
     # Stripe
     STRIPE_SECRET_KEY: str = ""

@@ -2,11 +2,16 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@clerk/nextjs';
 import { ArrowRight } from 'lucide-react';
+import { api } from '@/lib/api';
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { getToken } = useAuth();
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     businessName: '',
     businessDescription: '',
@@ -14,12 +19,34 @@ export default function OnboardingPage() {
     goals: '',
   });
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < 3) {
       setStep(step + 1);
     } else {
-      // Complete onboarding and redirect to dashboard
-      router.push('/dashboard');
+      // Complete onboarding - save to backend
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const token = await getToken();
+        if (!token) {
+          throw new Error('Authentication required');
+        }
+
+        await api.businesses.create({
+          name: formData.businessName,
+          description: formData.businessDescription,
+          target_audience: formData.targetAudience,
+          marketing_goals: formData.goals,
+        }, token);
+
+        // Success - redirect to dashboard
+        router.push('/dashboard');
+      } catch (err) {
+        console.error('Failed to save business:', err);
+        setError(err instanceof Error ? err.message : 'Failed to save business information');
+        setLoading(false);
+      }
     }
   };
 
@@ -152,21 +179,38 @@ export default function OnboardingPage() {
             </div>
           )}
 
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 rounded-lg bg-red-50 p-4 text-sm text-red-600">
+              {error}
+            </div>
+          )}
+
           {/* Actions */}
           <div className="mt-8 flex items-center justify-between">
             <button
               onClick={handleBack}
-              disabled={step === 1}
+              disabled={step === 1 || loading}
               className="rounded-lg px-6 py-2 font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Back
             </button>
             <button
               onClick={handleNext}
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2 font-semibold text-white hover:bg-blue-700"
+              disabled={loading}
+              className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {step === 3 ? 'Get Started' : 'Continue'}
-              <ArrowRight className="h-5 w-5" />
+              {loading ? (
+                <>
+                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  {step === 3 ? 'Get Started' : 'Continue'}
+                  <ArrowRight className="h-5 w-5" />
+                </>
+              )}
             </button>
           </div>
         </div>
