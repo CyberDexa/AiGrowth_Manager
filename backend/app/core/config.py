@@ -1,0 +1,62 @@
+from pydantic_settings import BaseSettings
+from typing import List
+import os
+
+
+class Settings(BaseSettings):
+    """Application settings"""
+    
+    # Environment
+    ENVIRONMENT: str = "development"
+    DEBUG: bool = True
+    
+    # API
+    API_V1_STR: str = "/api/v1"
+    PROJECT_NAME: str = "AI Growth Manager"
+    
+    # CORS
+    CORS_ORIGINS: List[str] = [
+        "http://localhost:3000",
+        "http://localhost:3001", 
+        "https://localhost:3000",
+    ]
+    
+    # Database
+    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/aigrowth"
+    
+    # Redis
+    REDIS_URL: str = "redis://localhost:6379"
+    
+    # Clerk
+    CLERK_SECRET_KEY: str = ""
+    CLERK_WEBHOOK_SECRET: str = ""
+    
+    # Stripe
+    STRIPE_SECRET_KEY: str = ""
+    STRIPE_WEBHOOK_SECRET: str = ""
+    
+    # AI
+    OPENROUTER_API_KEY: str = ""
+    OPENAI_API_KEY: str = ""
+    
+    # Social Media
+    META_APP_ID: str = ""
+    META_APP_SECRET: str = ""
+    TWITTER_CLIENT_ID: str = ""
+    TWITTER_CLIENT_SECRET: str = ""
+    LINKEDIN_CLIENT_ID: str = ""
+    LINKEDIN_CLIENT_SECRET: str = ""
+    
+    # Email
+    RESEND_API_KEY: str = ""
+    
+    # Security
+    ENCRYPTION_KEY: str = ""
+    JWT_SECRET: str = ""
+    
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
+
+
+settings = Settings()
