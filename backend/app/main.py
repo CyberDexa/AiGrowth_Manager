@@ -37,14 +37,14 @@ async def health_check():
     }
 
 # Include routers
-from app.api import users, businesses
+from app.api import users, businesses, strategies
 
 app.include_router(users.router, prefix="/api/v1")
 app.include_router(businesses.router, prefix="/api/v1")
+app.include_router(strategies.router, prefix="/api/v1/strategies", tags=["strategies"])
 
 # Additional routers to add later:
-# from app.api import strategies, content, social, analytics, billing
-# app.include_router(strategies.router, prefix="/api/v1")
+# from app.api import content, social, analytics, billing
 # app.include_router(content.router, prefix="/api/v1")
 # etc...
 

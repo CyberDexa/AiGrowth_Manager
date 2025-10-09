@@ -2,7 +2,7 @@
 Pydantic schemas for API request/response validation
 """
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, Dict, Any
 from datetime import datetime
 
 
@@ -51,6 +51,40 @@ class BusinessUpdate(BaseModel):
 class BusinessResponse(BusinessBase):
     id: int
     user_id: str
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# Strategy Schemas
+class StrategyGenerateRequest(BaseModel):
+    business_id: int
+    additional_context: Optional[str] = None
+
+
+class StrategyBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    strategy_data: Dict[str, Any]
+    status: Optional[str] = "draft"
+
+
+class StrategyCreate(StrategyBase):
+    business_id: int
+
+
+class StrategyUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    strategy_data: Optional[Dict[str, Any]] = None
+    status: Optional[str] = None
+
+
+class StrategyResponse(StrategyBase):
+    id: int
+    business_id: int
     created_at: datetime
     updated_at: datetime
 

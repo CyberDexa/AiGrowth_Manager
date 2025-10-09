@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     ]
     
     # Database
-    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/aigrowth"
+    DATABASE_URL: str = "postgresql://postgres:postgres@127.0.0.1:5432/ai_growth_manager"
     
     # Redis
     REDIS_URL: str = "redis://localhost:6379"
@@ -58,6 +58,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "allow"  # Allow extra fields from .env
 
 
 settings = Settings()
