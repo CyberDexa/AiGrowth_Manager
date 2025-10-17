@@ -1,0 +1,12 @@
+{
+  "name": "ai-growth-manager-backend",
+  "version": "1.0.0",
+  "description": "AI Growth Manager Backend API",
+  "main": "app/main.py",
+  "scripts": {
+    "start": "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8003}"
+  },
+  "keywords": ["fastapi", "ai", "social-media"],
+  "author": "CyberDexa",
+  "license": "MIT"
+}
