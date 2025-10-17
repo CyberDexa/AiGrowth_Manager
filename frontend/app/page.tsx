@@ -3,27 +3,31 @@ import { ArrowRight, Sparkles, Target, TrendingUp, Zap } from 'lucide-react';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-violet-50 to-teal-50">
       {/* Header */}
-      <header className="border-b bg-white/50 backdrop-blur-sm">
+      <header className="border-b border-gray-200 bg-white/80 backdrop-blur-md shadow-sm">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <div className="flex items-center space-x-2">
-            <Sparkles className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold">AI Growth Manager</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-violet-500 shadow-lg">
+              <Sparkles className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-violet-600 to-teal-600 bg-clip-text text-transparent">
+              AI Growth Manager
+            </span>
           </div>
           <nav className="hidden md:flex items-center space-x-6">
-            <Link href="#features" className="text-gray-600 hover:text-gray-900">
+            <Link href="#features" className="text-gray-700 hover:text-violet-600 transition-colors font-medium">
               Features
             </Link>
-            <Link href="#pricing" className="text-gray-600 hover:text-gray-900">
+            <Link href="#pricing" className="text-gray-700 hover:text-violet-600 transition-colors font-medium">
               Pricing
             </Link>
-            <Link href="/sign-in" className="text-gray-600 hover:text-gray-900">
+            <Link href="/sign-in" className="text-gray-700 hover:text-violet-600 transition-colors font-medium">
               Sign In
             </Link>
             <Link
               href="/sign-up"
-              className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              className="rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 px-5 py-2.5 text-white hover:from-violet-700 hover:to-violet-600 transition-all shadow-md hover:shadow-lg font-semibold"
             >
               Get Started
             </Link>
@@ -34,40 +38,49 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
         <div className="mx-auto max-w-4xl">
-          <h1 className="text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+          <div className="inline-block mb-6 rounded-full bg-gradient-to-r from-violet-100 to-teal-100 px-4 py-2 text-sm font-semibold text-violet-700">
+            🚀 AI-Powered Marketing Automation
+          </div>
+          <h1 className="text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl lg:text-7xl">
             Your AI-Powered
-            <span className="text-blue-600"> Marketing Team</span>
+            <span className="block mt-2 bg-gradient-to-r from-violet-600 via-violet-500 to-teal-500 bg-clip-text text-transparent">
+              Marketing Team
+            </span>
           </h1>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
+          <p className="mt-8 text-xl leading-8 text-gray-700 max-w-3xl mx-auto">
             Stop struggling with marketing. Our AI builds strategies, creates content,
             and runs campaigns automatically. Get more customers while you focus on
             building your business.
           </p>
-          <div className="mt-10 flex items-center justify-center gap-x-6">
+          <div className="mt-12 flex items-center justify-center gap-x-6">
             <Link
               href="/sign-up"
-              className="rounded-lg bg-blue-600 px-6 py-3 text-lg font-semibold text-white hover:bg-blue-700 flex items-center gap-2"
+              className="group rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 px-8 py-4 text-lg font-semibold text-white hover:from-violet-700 hover:to-violet-600 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
             >
               Start Free Trial
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href="#features"
-              className="text-lg font-semibold text-gray-900 hover:text-gray-700"
+              className="text-lg font-semibold text-gray-800 hover:text-violet-600 transition-colors flex items-center gap-2"
             >
-              Learn more <span aria-hidden="true">→</span>
+              Learn more 
+              <span className="text-violet-500">→</span>
             </Link>
           </div>
           
           {/* Social Proof */}
-          <div className="mt-10 flex items-center justify-center gap-x-8 text-sm text-gray-600">
-            <div className="flex items-center gap-1">
-              <span className="font-semibold text-gray-900">14-day</span> free trial
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-sm text-gray-700">
+            <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm">
+              <span className="text-2xl">✨</span>
+              <span className="font-semibold text-violet-600">14-day</span> free trial
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm">
+              <span className="text-2xl">🎯</span>
               No credit card required
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-sm">
+              <span className="text-2xl">🔓</span>
               Cancel anytime
             </div>
           </div>
@@ -77,94 +90,94 @@ export default function HomePage() {
       {/* Features Section */}
       <section id="features" className="container mx-auto px-4 py-20">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900">
+          <h2 className="text-4xl font-bold text-gray-900">
             Everything you need to grow
           </h2>
-          <p className="mt-4 text-lg text-gray-600">
+          <p className="mt-4 text-xl text-gray-700">
             An autonomous AI marketing system that works 24/7
           </p>
         </div>
 
         <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {/* Feature 1 */}
-          <div className="rounded-xl border bg-white p-8 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
-              <Target className="h-6 w-6 text-blue-600" />
+          <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-violet-300 hover:shadow-xl transition-all duration-300">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-violet-600 shadow-lg group-hover:scale-110 transition-transform">
+              <Target className="h-7 w-7 text-white" />
             </div>
-            <h3 className="mt-4 text-xl font-semibold text-gray-900">
+            <h3 className="mt-6 text-xl font-bold text-gray-900">
               AI Strategy Builder
             </h3>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-3 text-gray-700 leading-relaxed">
               Describe your business and get a complete marketing strategy tailored
               to your goals and audience.
             </p>
           </div>
 
           {/* Feature 2 */}
-          <div className="rounded-xl border bg-white p-8 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-              <Sparkles className="h-6 w-6 text-green-600" />
+          <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-teal-300 hover:shadow-xl transition-all duration-300">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-lg group-hover:scale-110 transition-transform">
+              <Sparkles className="h-7 w-7 text-white" />
             </div>
-            <h3 className="mt-4 text-xl font-semibold text-gray-900">
+            <h3 className="mt-6 text-xl font-bold text-gray-900">
               Content Generation
             </h3>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-3 text-gray-700 leading-relaxed">
               Generate engaging posts, threads, and articles for all your social
               media platforms in seconds.
             </p>
           </div>
 
           {/* Feature 3 */}
-          <div className="rounded-xl border bg-white p-8 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
-              <Zap className="h-6 w-6 text-purple-600" />
+          <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-violet-300 hover:shadow-xl transition-all duration-300">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-teal-500 shadow-lg group-hover:scale-110 transition-transform">
+              <Zap className="h-7 w-7 text-white" />
             </div>
-            <h3 className="mt-4 text-xl font-semibold text-gray-900">
+            <h3 className="mt-6 text-xl font-bold text-gray-900">
               Auto-Posting
             </h3>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-3 text-gray-700 leading-relaxed">
               Schedule and publish content automatically to LinkedIn, Twitter,
               Facebook, and Instagram.
             </p>
           </div>
 
           {/* Feature 4 */}
-          <div className="rounded-xl border bg-white p-8 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100">
-              <TrendingUp className="h-6 w-6 text-orange-600" />
+          <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-teal-300 hover:shadow-xl transition-all duration-300">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-teal-600 to-violet-500 shadow-lg group-hover:scale-110 transition-transform">
+              <TrendingUp className="h-7 w-7 text-white" />
             </div>
-            <h3 className="mt-4 text-xl font-semibold text-gray-900">
+            <h3 className="mt-6 text-xl font-bold text-gray-900">
               Performance Analytics
             </h3>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-3 text-gray-700 leading-relaxed">
               Track engagement, reach, and conversions. Know what's working and
               what's not.
             </p>
           </div>
 
           {/* Feature 5 */}
-          <div className="rounded-xl border bg-white p-8 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
-              <Target className="h-6 w-6 text-red-600" />
+          <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-violet-300 hover:shadow-xl transition-all duration-300">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-violet-700 shadow-lg group-hover:scale-110 transition-transform">
+              <Target className="h-7 w-7 text-white" />
             </div>
-            <h3 className="mt-4 text-xl font-semibold text-gray-900">
+            <h3 className="mt-6 text-xl font-bold text-gray-900">
               Smart Optimization
             </h3>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-3 text-gray-700 leading-relaxed">
               AI learns from your results and continuously improves your content
               and posting times.
             </p>
           </div>
 
           {/* Feature 6 */}
-          <div className="rounded-xl border bg-white p-8 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100">
-              <Sparkles className="h-6 w-6 text-indigo-600" />
+          <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-teal-300 hover:shadow-xl transition-all duration-300">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 shadow-lg group-hover:scale-110 transition-transform">
+              <Sparkles className="h-7 w-7 text-white" />
             </div>
-            <h3 className="mt-4 text-xl font-semibold text-gray-900">
+            <h3 className="mt-6 text-xl font-bold text-gray-900">
               Multi-Platform Support
             </h3>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-3 text-gray-700 leading-relaxed">
               Manage all your social media from one place. LinkedIn, Twitter, Meta,
               and more.
             </p>
@@ -173,116 +186,116 @@ export default function HomePage() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="bg-gray-50 py-20">
+      <section id="pricing" className="bg-gradient-to-br from-gray-50 to-violet-50/20 py-24">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900">
+            <h2 className="text-4xl font-bold text-gray-900">
               Simple, transparent pricing
             </h2>
-            <p className="mt-4 text-lg text-gray-600">
+            <p className="mt-4 text-xl text-gray-700">
               Start free, upgrade as you grow
             </p>
           </div>
 
-          <div className="mt-16 grid gap-8 lg:grid-cols-3">
+          <div className="mt-16 grid gap-8 lg:grid-cols-3 max-w-6xl mx-auto">
             {/* Free Plan */}
-            <div className="rounded-xl border bg-white p-8 shadow-sm">
-              <h3 className="text-xl font-semibold">Free</h3>
-              <p className="mt-2 text-sm text-gray-600">Perfect to get started</p>
-              <p className="mt-4 text-4xl font-bold">$0</p>
-              <p className="text-gray-600">forever</p>
-              <ul className="mt-6 space-y-3">
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>10 AI-generated posts/month</span>
+            <div className="rounded-2xl border-2 border-gray-200 bg-white p-8 shadow-md hover:shadow-xl transition-all">
+              <h3 className="text-2xl font-bold text-gray-900">Free</h3>
+              <p className="mt-2 text-sm text-gray-700">Perfect to get started</p>
+              <p className="mt-6 text-5xl font-bold text-gray-900">$0</p>
+              <p className="text-gray-700 font-medium">forever</p>
+              <ul className="mt-8 space-y-4">
+                <li className="flex items-start gap-3">
+                  <span className="text-xl text-teal-500">✓</span>
+                  <span className="text-gray-800">10 AI-generated posts/month</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>1 platform connection</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-xl text-teal-500">✓</span>
+                  <span className="text-gray-800">1 platform connection</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Basic analytics</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-xl text-teal-500">✓</span>
+                  <span className="text-gray-800">Basic analytics</span>
                 </li>
               </ul>
               <Link
                 href="/sign-up"
-                className="mt-8 block rounded-lg border-2 border-gray-300 px-4 py-2 text-center font-semibold hover:border-gray-400"
+                className="mt-8 block rounded-xl border-2 border-gray-300 px-6 py-3 text-center font-semibold hover:border-violet-400 hover:bg-violet-50 transition-all"
               >
                 Get Started
               </Link>
             </div>
 
             {/* Pro Plan */}
-            <div className="rounded-xl border-2 border-blue-600 bg-white p-8 shadow-lg relative">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-blue-600 px-3 py-1 text-sm font-semibold text-white">
+            <div className="rounded-2xl border-2 border-violet-500 bg-white p-8 shadow-xl relative transform lg:scale-105">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-violet-600 to-violet-500 px-4 py-1.5 text-sm font-bold text-white shadow-lg">
                 Most Popular
               </div>
-              <h3 className="text-xl font-semibold">Pro</h3>
-              <p className="mt-2 text-sm text-gray-600">For growing businesses</p>
-              <p className="mt-4 text-4xl font-bold">$29</p>
-              <p className="text-gray-600">per month</p>
-              <ul className="mt-6 space-y-3">
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Unlimited AI posts</span>
+              <h3 className="text-2xl font-bold text-gray-900">Pro</h3>
+              <p className="mt-2 text-sm text-gray-700">For growing businesses</p>
+              <p className="mt-6 text-5xl font-bold bg-gradient-to-r from-violet-600 to-teal-600 bg-clip-text text-transparent">$29</p>
+              <p className="text-gray-700 font-medium">per month</p>
+              <ul className="mt-8 space-y-4">
+                <li className="flex items-start gap-3">
+                  <span className="text-xl text-violet-500">✓</span>
+                  <span className="text-gray-800 font-medium">Unlimited AI posts</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>3 platform connections</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-xl text-violet-500">✓</span>
+                  <span className="text-gray-800 font-medium">3 platform connections</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Advanced analytics</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-xl text-violet-500">✓</span>
+                  <span className="text-gray-800 font-medium">Advanced analytics</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Auto-scheduling</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-xl text-violet-500">✓</span>
+                  <span className="text-gray-800 font-medium">Auto-scheduling</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Priority support</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-xl text-violet-500">✓</span>
+                  <span className="text-gray-800 font-medium">Priority support</span>
                 </li>
               </ul>
               <Link
                 href="/sign-up"
-                className="mt-8 block rounded-lg bg-blue-600 px-4 py-2 text-center font-semibold text-white hover:bg-blue-700"
+                className="mt-8 block rounded-xl bg-gradient-to-r from-violet-600 to-violet-500 px-6 py-3 text-center font-bold text-white hover:from-violet-700 hover:to-violet-600 shadow-lg hover:shadow-xl transition-all"
               >
                 Start Free Trial
               </Link>
             </div>
 
             {/* Enterprise Plan */}
-            <div className="rounded-xl border bg-white p-8 shadow-sm">
-              <h3 className="text-xl font-semibold">Enterprise</h3>
-              <p className="mt-2 text-sm text-gray-600">For larger teams</p>
-              <p className="mt-4 text-4xl font-bold">$99</p>
-              <p className="text-gray-600">per month</p>
-              <ul className="mt-6 space-y-3">
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Everything in Pro</span>
+            <div className="rounded-2xl border-2 border-gray-200 bg-white p-8 shadow-md hover:shadow-xl transition-all">
+              <h3 className="text-2xl font-bold text-gray-900">Enterprise</h3>
+              <p className="mt-2 text-sm text-gray-700">For larger teams</p>
+              <p className="mt-6 text-5xl font-bold text-gray-900">$99</p>
+              <p className="text-gray-700 font-medium">per month</p>
+              <ul className="mt-8 space-y-4">
+                <li className="flex items-start gap-3">
+                  <span className="text-xl text-teal-500">✓</span>
+                  <span className="text-gray-800">Everything in Pro</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Unlimited platforms</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-xl text-teal-500">✓</span>
+                  <span className="text-gray-800">Unlimited platforms</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Team collaboration</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-xl text-teal-500">✓</span>
+                  <span className="text-gray-800">Team collaboration</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>API access</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-xl text-teal-500">✓</span>
+                  <span className="text-gray-800">API access</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
-                  <span>Dedicated support</span>
+                <li className="flex items-start gap-3">
+                  <span className="text-xl text-teal-500">✓</span>
+                  <span className="text-gray-800">Dedicated support</span>
                 </li>
               </ul>
               <Link
                 href="/sign-up"
-                className="mt-8 block rounded-lg border-2 border-gray-300 px-4 py-2 text-center font-semibold hover:border-gray-400"
+                className="mt-8 block rounded-xl border-2 border-gray-300 px-6 py-3 text-center font-semibold hover:border-violet-400 hover:bg-violet-50 transition-all"
               >
                 Contact Sales
               </Link>
@@ -292,17 +305,17 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="container mx-auto px-4 py-20 text-center">
-        <div className="mx-auto max-w-2xl">
-          <h2 className="text-3xl font-bold text-gray-900">
+      <section className="container mx-auto px-4 py-24 text-center">
+        <div className="mx-auto max-w-3xl rounded-3xl bg-gradient-to-r from-violet-600 via-violet-500 to-teal-500 p-12 shadow-2xl">
+          <h2 className="text-4xl font-bold text-white">
             Ready to grow your business?
           </h2>
-          <p className="mt-4 text-lg text-gray-600">
+          <p className="mt-4 text-xl text-violet-100">
             Join hundreds of small businesses using AI to automate their marketing
           </p>
           <Link
             href="/sign-up"
-            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-4 text-lg font-semibold text-white hover:bg-blue-700"
+            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 text-lg font-bold text-violet-600 hover:bg-gray-50 shadow-xl transition-all hover:scale-105"
           >
             Start Free Trial
             <ArrowRight className="h-5 w-5" />
@@ -311,10 +324,20 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-gray-50">
+      <footer className="border-t border-gray-200 bg-white">
         <div className="container mx-auto px-4 py-12">
-          <div className="text-center text-sm text-gray-600">
-            <p>&copy; 2025 AI Growth Manager. All rights reserved.</p>
+          <div className="text-center">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-violet-500">
+                <Sparkles className="h-5 w-5 text-white" />
+              </div>
+              <span className="text-lg font-bold bg-gradient-to-r from-violet-600 to-teal-600 bg-clip-text text-transparent">
+                AI Growth Manager
+              </span>
+            </div>
+            <p className="text-sm text-gray-700">
+              &copy; 2025 AI Growth Manager. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>

@@ -19,6 +19,9 @@ class Strategy(Base):
     
     # Strategy details
     title = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    strategy_data = Column(JSON, nullable=True)  # Full structured strategy data
+    status = Column(String, default="draft")  # draft, active, archived
     overview = Column(Text, nullable=True)
     target_audience_analysis = Column(Text, nullable=True)
     content_pillars = Column(JSON, nullable=True)  # Array of content themes
@@ -34,6 +37,7 @@ class Strategy(Base):
     
     # Relationships
     business = relationship("Business", back_populates="strategies")
+    published_posts = relationship("PublishedPost", back_populates="strategy", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Strategy {self.title}>"

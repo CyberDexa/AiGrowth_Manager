@@ -7,8 +7,9 @@ from typing import List
 
 from app.db.database import get_db
 from app.models.business import Business
+from app.models.user import User
 from app.schemas import BusinessCreate, BusinessUpdate, BusinessResponse
-from app.core.auth import get_current_user_id
+from app.core.auth import get_current_user_id, get_current_user
 
 router = APIRouter(prefix="/businesses", tags=["businesses"])
 
@@ -16,12 +17,28 @@ router = APIRouter(prefix="/businesses", tags=["businesses"])
 @router.post("/", response_model=BusinessResponse, status_code=201)
 async def create_business(
     business_data: BusinessCreate,
-    user_id: str = Depends(get_current_user_id),
+    user_data: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Create a new business (from onboarding form)
+    Auto-creates user if they don't exist
     """
+    user_id = user_data.get("sub")
+    
+    # Check if user exists, if not create them
+    user = db.query(User).filter(User.clerk_id == user_id).first()
+    if not user:
+        # Create user from Clerk token data
+        user = User(
+            clerk_id=user_id,
+            email=user_data.get("email", ""),
+            first_name=user_data.get("given_name"),
+            last_name=user_data.get("family_name")
+        )
+        db.add(user)
+        db.flush()  # Flush to ensure user is in DB before creating business
+    
     # Create new business
     new_business = Business(
         user_id=user_id,

@@ -40,13 +40,23 @@ class Settings(BaseSettings):
     OPENROUTER_API_KEY: str = ""
     OPENAI_API_KEY: str = ""
     
+    # Image Storage (Cloudinary)
+    CLOUDINARY_CLOUD_NAME: str = ""
+    CLOUDINARY_API_KEY: str = ""
+    CLOUDINARY_API_SECRET: str = ""
+    
     # Social Media
     META_APP_ID: str = ""
     META_APP_SECRET: str = ""
+    META_REDIRECT_URI: str = "http://localhost:8003/api/v1/social/meta/callback"
+    
     TWITTER_CLIENT_ID: str = ""
     TWITTER_CLIENT_SECRET: str = ""
+    TWITTER_REDIRECT_URI: str = "http://localhost:8003/api/v1/social/twitter/callback"
+    
     LINKEDIN_CLIENT_ID: str = ""
     LINKEDIN_CLIENT_SECRET: str = ""
+    LINKEDIN_REDIRECT_URI: str = "http://localhost:8003/api/v1/social/linkedin/callback"
     
     # Email
     RESEND_API_KEY: str = ""

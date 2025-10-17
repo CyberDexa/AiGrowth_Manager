@@ -16,6 +16,21 @@ class Platform(str, enum.Enum):
     INSTAGRAM = "instagram"
 
 
+class ContentType(str, enum.Enum):
+    POST = "post"
+    THREAD = "thread"
+    ARTICLE = "article"
+    STORY = "story"
+
+
+class ContentTone(str, enum.Enum):
+    PROFESSIONAL = "professional"
+    CASUAL = "casual"
+    EDUCATIONAL = "educational"
+    PROMOTIONAL = "promotional"
+    INSPIRATIONAL = "inspirational"
+
+
 class ContentStatus(str, enum.Enum):
     DRAFT = "draft"
     SCHEDULED = "scheduled"
@@ -34,9 +49,11 @@ class Content(Base):
     
     # Content details
     platform = Column(Enum(Platform), nullable=False)
-    content_type = Column(String, default="post")  # post, thread, article
+    content_type = Column(Enum(ContentType), default=ContentType.POST)
+    tone = Column(Enum(ContentTone), default=ContentTone.PROFESSIONAL)
     text = Column(Text, nullable=False)
     media_urls = Column(Text, nullable=True)  # JSON string of URLs
+    hashtags = Column(Text, nullable=True)  # Comma-separated hashtags
     
     # Scheduling
     status = Column(Enum(ContentStatus), default=ContentStatus.DRAFT, nullable=False)
@@ -57,6 +74,7 @@ class Content(Base):
     
     # Relationships
     business = relationship("Business", back_populates="content")
+    metrics = relationship("ContentMetrics", back_populates="content", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Content {self.platform.value} - {self.status.value}>"

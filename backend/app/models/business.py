@@ -36,6 +36,12 @@ class Business(Base):
     strategies = relationship("Strategy", back_populates="business", cascade="all, delete-orphan")
     social_accounts = relationship("SocialAccount", back_populates="business", cascade="all, delete-orphan")
     content = relationship("Content", back_populates="business", cascade="all, delete-orphan")
+    metrics = relationship("BusinessMetrics", back_populates="business", cascade="all, delete-orphan")
+    published_posts = relationship("PublishedPost", back_populates="business", cascade="all, delete-orphan")
+    scheduled_posts = relationship("ScheduledPost", back_populates="business", cascade="all, delete-orphan")
+    images = relationship("Image", back_populates="business", cascade="all, delete-orphan")
+    post_analytics = relationship("PostAnalytics", back_populates="business", cascade="all, delete-orphan")
+    analytics_summaries = relationship("AnalyticsSummary", back_populates="business", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Business {self.name}>"
