@@ -119,7 +119,7 @@ export default function AnalyticsPage() {
       });
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/analytics/overview?${params}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/analytics-simple/overview?${params}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
