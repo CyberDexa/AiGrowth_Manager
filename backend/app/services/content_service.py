@@ -166,8 +166,8 @@ class ContentGenerationService:
             "twitter": {
                 "max_length": 280,
                 "style": "Concise, engaging, conversational",
-                "hashtags": "1-2 hashtags maximum",
-                "best_practices": "Hook in first 100 characters, use threads for longer content"
+                "hashtags": "1-2 SHORT hashtags maximum (keep total under 260 chars to leave room)",
+                "best_practices": "Hook in first 100 characters, every character counts including spaces and hashtags"
             },
             "facebook": {
                 "max_length": 2000,
@@ -188,7 +188,7 @@ class ContentGenerationService:
         # Special Twitter length warning
         twitter_warning = ""
         if platform.lower() == "twitter":
-            twitter_warning = f"\n\n⚠️ **CRITICAL TWITTER REQUIREMENT:**\nThe post MUST be EXACTLY {guidelines['max_length']} characters or less (including spaces, hashtags, and emojis).\nCount every character carefully. If your post exceeds {guidelines['max_length']} characters, it will be REJECTED by the API.\nAim for 250-270 characters to leave room for hashtags."
+            twitter_warning = f"\n\n⚠️ **CRITICAL TWITTER REQUIREMENT:**\nThe ENTIRE post (text + hashtags + spaces + emojis) MUST be ≤280 characters.\nCount EVERY character. If you use hashtags, keep them SHORT.\nExample: 'Great tips for small business growth! 🚀 #SmallBiz #Growth' = 68 chars\nAim for 250-260 characters max to be safe."
         
         prompt = f"""Generate {num_posts} engaging social media {"post" if num_posts == 1 else "posts"} for the following business:
 
@@ -218,10 +218,10 @@ class ContentGenerationService:
 1. Create compelling, {tone} content that resonates with {target_audience}
 2. Include a strong hook in the first line
 3. Provide value (educate, inspire, or entertain)
-4. Include relevant hashtags at the end
+4. {f"Use MAX 1-2 SHORT hashtags (like #AI #Growth, not #LongHashtagsLikeThis)" if platform.lower() == "twitter" else "Include relevant hashtags at the end"}
 5. Add a clear call-to-action
 6. Keep it authentic and aligned with the business goals
-{"7. FOR TWITTER: Count characters meticulously - total must be ≤280 including everything" if platform.lower() == "twitter" else ""}
+{"7. FOR TWITTER: Total length including ALL text, spaces, emojis, and hashtags MUST be ≤280 chars" if platform.lower() == "twitter" else ""}
 
 **IMPORTANT OUTPUT FORMAT:**
 Provide ONLY the final post text with hashtags included.
