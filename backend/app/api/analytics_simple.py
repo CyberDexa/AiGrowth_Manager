@@ -8,7 +8,7 @@ from typing import List, Dict
 from datetime import datetime, timedelta
 
 from app.db.database import get_db
-from app.dependencies.auth import get_current_user
+from app.core.auth import get_current_user
 from app.models.published_post import PublishedPost
 from app.models.business import Business
 
