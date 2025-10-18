@@ -127,6 +127,20 @@ class MultiPlatformPublishResponse(BaseModel):
         }
 
 
+class UpdateScheduledPostRequest(BaseModel):
+    """Request model for updating a scheduled post."""
+    scheduled_for: datetime
+    content_text: Optional[str] = None
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "scheduled_for": "2025-01-22T15:00:00Z",
+                "content_text": "Updated content for the post"
+            }
+        }
+
+
 class ScheduledPostResponse(BaseModel):
     """Response model for scheduled post."""
     id: int

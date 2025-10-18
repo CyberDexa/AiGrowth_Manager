@@ -46,7 +46,8 @@ from app.schemas.publishing_v2 import (
     SchedulePublishRequest,
     ScheduledPostResponse,
     ScheduledPostListResponse,
-    CancelScheduledPostResponse
+    CancelScheduledPostResponse,
+    UpdateScheduledPostRequest
 )
 from app.services.publishing import (
     linkedin_publisher,
@@ -393,6 +394,110 @@ async def get_scheduled_posts(
             for post in scheduled_posts
         ],
         total=len(scheduled_posts)
+    )
+
+
+@router.patch("/v2/scheduled/{scheduled_post_id}", response_model=ScheduledPostResponse)
+async def update_scheduled_post(
+    scheduled_post_id: int,
+    update_request: UpdateScheduledPostRequest,
+    db: Session = Depends(get_db),
+    user_id: str = Depends(get_current_user_id)
+):
+    """
+    Update a scheduled post's time and/or content.
+    
+    Reschedules the Celery task with the new time.
+    """
+    # Get scheduled post
+    scheduled_post = db.query(ScheduledPost).filter(
+        ScheduledPost.id == scheduled_post_id
+    ).first()
+    
+    if not scheduled_post:
+        raise HTTPException(status_code=404, detail="Scheduled post not found")
+    
+    # Verify ownership
+    business = db.query(Business).filter(
+        Business.id == scheduled_post.business_id,
+        Business.user_id == user_id
+    ).first()
+    
+    if not business:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Check if post can be updated (only pending posts)
+    if scheduled_post.status != "pending":
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Cannot update post with status: {scheduled_post.status}. Only pending posts can be updated."
+        )
+    
+    # Validate future date
+    if update_request.scheduled_for <= datetime.utcnow():
+        raise HTTPException(status_code=400, detail="Scheduled time must be in the future")
+    
+    # Update content if provided
+    if update_request.content_text is not None:
+        scheduled_post.content_text = update_request.content_text
+    
+    # Update schedule time
+    old_scheduled_for = scheduled_post.scheduled_for
+    scheduled_post.scheduled_for = update_request.scheduled_for
+    scheduled_post.updated_at = datetime.utcnow()
+    
+    # Reschedule Celery task if exists
+    if scheduled_post.celery_task_id:
+        try:
+            from app.celery_app import celery_app
+            from app.tasks.publishing_tasks import publish_scheduled_post
+            
+            # Revoke old task
+            celery_app.control.revoke(scheduled_post.celery_task_id, terminate=True)
+            logger.info(
+                f"Revoked old Celery task {scheduled_post.celery_task_id} for scheduled post {scheduled_post_id}",
+                extra={
+                    "event_type": "celery_task_revoked",
+                    "scheduled_post_id": scheduled_post_id,
+                    "old_task_id": scheduled_post.celery_task_id
+                }
+            )
+            
+            # Schedule new task
+            result = publish_scheduled_post.apply_async(
+                args=[scheduled_post_id],
+                eta=update_request.scheduled_for
+            )
+            scheduled_post.celery_task_id = result.id
+            
+            logger.info(
+                f"Rescheduled post {scheduled_post_id} from {old_scheduled_for} to {update_request.scheduled_for}",
+                extra={
+                    "event_type": "post_rescheduled",
+                    "scheduled_post_id": scheduled_post_id,
+                    "old_time": old_scheduled_for.isoformat(),
+                    "new_time": update_request.scheduled_for.isoformat(),
+                    "new_task_id": result.id
+                }
+            )
+        except ImportError:
+            logger.warning("Celery not available - cannot reschedule task")
+        except Exception as e:
+            logger.error(f"Failed to reschedule Celery task: {e}", exc_info=True)
+            # Don't fail the update if Celery fails
+    
+    db.commit()
+    db.refresh(scheduled_post)
+    
+    return ScheduledPostResponse(
+        id=scheduled_post.id,
+        content_text=scheduled_post.content_text,
+        platform=scheduled_post.platform,
+        social_account_id=scheduled_post.social_account_id,
+        scheduled_for=scheduled_post.scheduled_for,
+        status=scheduled_post.status,
+        celery_task_id=scheduled_post.celery_task_id,
+        created_at=scheduled_post.created_at
     )
 
 
