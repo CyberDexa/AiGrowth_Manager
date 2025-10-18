@@ -12,12 +12,12 @@
 |--------|-------|--------|
 | **Phase** | 2: Core Development | MVP Complete by Jan 2026 |
 | **Days Elapsed** | 11 days | 98 days total |
-| **Completion** | 70% | 100% |
-| **Weekly Hours** | 20 hrs | 10-15 hrs/week avg |
+| **Completion** | 75% | 100% |
+| **Weekly Hours** | 24 hrs | 10-15 hrs/week avg |
 | **Documents Created** | 27/15 | All core docs + summaries ✅ |
-| **Git Commits** | 48+ | - |
-| **API Endpoints** | 21 (analytics-simple added) | Growing |
-| **Production Status** | ✅ LIVE | Backend + Database + Analytics deployed |
+| **Git Commits** | 51+ | - |
+| **API Endpoints** | 22 (calendar PATCH added) | Growing |
+| **Production Status** | ✅ LIVE | Backend + Database + Analytics + Calendar deployed |
 
 ---
 
@@ -253,6 +253,27 @@
   - Live metrics (likes, views, engagement) currently show 0 until token refresh built
   - Analytics dashboard functional, showing post count and platform distribution
 - ✅ **Total Deliverable**: Working analytics dashboard with charts, platform breakdown, and post tracking (metrics sync pending token refresh)
+
+### Week 3 (Oct 19, 2025) - Scheduled Posts Calendar 📅
+- ✅ **Calendar Feature - LIVE!** 🗓️
+  - PATCH /v2/scheduled/{id} endpoint for rescheduling posts
+  - UpdateScheduledPostRequest schema with scheduled_for and optional content_text
+  - Celery task rescheduling (revoke old task, create new task with updated time)
+  - Future date validation and business ownership verification
+  - Frontend calendar page with react-big-calendar
+  - Month/week/day/agenda views
+  - Platform color-coding (Twitter blue, LinkedIn blue, Meta pink)
+  - Drag-and-drop rescheduling with loading states
+  - Post details modal with content preview, schedule time, status
+  - Delete scheduled post functionality
+  - Error handling with toast notifications
+- ✅ **Navigation Updates**
+  - Added Calendar to dashboard sidebar navigation
+  - Calendar icon (Lucide) with consistent UI styling
+- ✅ **Dependencies**
+  - Installed react-big-calendar, date-fns, @types/react-big-calendar
+  - Configured dateFnsLocalizer with enUS locale
+- ✅ **Total Deliverable**: Fully functional content calendar with drag-and-drop scheduling, post management, and multi-view display
 
 ### Week 3 (Oct 18, 2025) - Production Launch & Twitter Publishing 🚀
 - ✅ **Production Deployment Complete!**
