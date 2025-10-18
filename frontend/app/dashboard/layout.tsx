@@ -3,7 +3,7 @@
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, FileText, Home, Settings, Target } from 'lucide-react';
+import { BarChart3, Calendar, FileText, Home, Settings, Target } from 'lucide-react';
 
 export default function DashboardLayout({
   children,
@@ -16,6 +16,7 @@ export default function DashboardLayout({
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Strategies', href: '/dashboard/strategies', icon: Target },
     { name: 'Content', href: '/dashboard/content', icon: FileText },
+    { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
     { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
     { name: 'Settings', href: '/dashboard/settings', icon: Settings },
   ];
