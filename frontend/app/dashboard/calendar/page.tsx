@@ -5,7 +5,7 @@ import { useAuth } from '@clerk/nextjs';
 import { Calendar as BigCalendar, dateFnsLocalizer, Event } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import { Linkedin, Twitter, Facebook, Calendar as CalendarIcon, Clock, Plus, AlertCircle } from 'lucide-react';
+import { Linkedin, Twitter, Facebook, Calendar as CalendarIcon, Clock, Plus, AlertCircle, X, Edit2, Trash2 } from 'lucide-react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const locales = {
@@ -33,6 +33,7 @@ interface ScheduledPost {
 
 interface CalendarEvent extends Event {
   id: number;
+  title: string;
   post: ScheduledPost;
 }
 
@@ -70,6 +71,8 @@ export default function CalendarPage() {
   const [businessId, setBusinessId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [updateLoading, setUpdateLoading] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<ScheduledPost | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const storedBusiness = localStorage.getItem('selectedBusiness');
@@ -158,6 +161,47 @@ export default function CalendarPage() {
     }
     updateScheduledTime(event.id, start);
   }, [businessId]);
+
+  const handleSelectEvent = useCallback((event: CalendarEvent) => {
+    setSelectedPost(event.post);
+    setShowModal(true);
+  }, []);
+
+  const handleDeletePost = async (postId: number) => {
+    if (!confirm('Are you sure you want to delete this scheduled post?')) {
+      return;
+    }
+
+    try {
+      const token = await getToken();
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v2/schedule/${postId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        setPosts(prev => prev.filter(p => p.id !== postId));
+        setShowModal(false);
+        setSelectedPost(null);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || 'Failed to delete post');
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      setError('Network error deleting post');
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedPost(null);
+  };
 
   const events: CalendarEvent[] = posts.map(post => ({
     id: post.id,
@@ -294,6 +338,7 @@ export default function CalendarPage() {
               event: CustomEvent,
             }}
             onEventDrop={handleEventDrop}
+            onSelectEvent={handleSelectEvent}
             draggableAccessor={() => !updateLoading}
             resizable={false}
             views={['month', 'week', 'day', 'agenda']}
@@ -308,6 +353,108 @@ export default function CalendarPage() {
           <div className="bg-white p-6 rounded-lg shadow-lg flex items-center gap-3">
             <Clock className="h-6 w-6 animate-spin text-violet-600" />
             <span className="text-gray-700">Updating schedule...</span>
+          </div>
+        </div>
+      )}
+
+      {/* Post details modal */}
+      {showModal && selectedPost && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal header */}
+            <div className="flex items-center justify-between p-6 border-b">
+              <div className="flex items-center gap-3">
+                {getPlatformIcon(selectedPost.platform)}
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">Scheduled Post</h2>
+                  <p className="text-sm text-gray-600 capitalize">{selectedPost.platform}</p>
+                </div>
+              </div>
+              <button
+                onClick={closeModal}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            {/* Modal content */}
+            <div className="p-6 space-y-6">
+              {/* Schedule time */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-2">
+                  <Clock className="h-4 w-4" />
+                  Scheduled For
+                </label>
+                <p className="text-gray-900 text-lg">
+                  {format(new Date(selectedPost.scheduled_for), 'EEEE, MMMM d, yyyy')}
+                </p>
+                <p className="text-gray-600">
+                  {format(new Date(selectedPost.scheduled_for), 'h:mm a')}
+                </p>
+              </div>
+
+              {/* Content */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  Content
+                </label>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <p className="text-gray-900 whitespace-pre-wrap">{selectedPost.content_text}</p>
+                </div>
+              </div>
+
+              {/* Status */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  Status
+                </label>
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                  selectedPost.status === 'pending' 
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {selectedPost.status}
+                </span>
+              </div>
+
+              {/* Created date */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  Created
+                </label>
+                <p className="text-gray-600">
+                  {format(new Date(selectedPost.created_at), 'MMM d, yyyy h:mm a')}
+                </p>
+              </div>
+            </div>
+
+            {/* Modal actions */}
+            <div className="flex items-center justify-end gap-3 p-6 border-t bg-gray-50">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  // TODO: Implement edit functionality
+                  alert('Edit functionality coming soon!');
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
+              >
+                <Edit2 className="h-4 w-4" />
+                Edit Content
+              </button>
+              <button
+                onClick={() => handleDeletePost(selectedPost.id)}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}
