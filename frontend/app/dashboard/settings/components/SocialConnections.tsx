@@ -131,9 +131,8 @@ export default function SocialConnections({ businessId }: SocialConnectionsProps
   };
 
   const getAccount = (platform: string) => {
-    // For Meta platforms, check for 'facebook' platform since that's what we store
-    const platformToCheck = platform === 'meta' ? 'facebook' : platform;
-    return accounts.find((acc) => acc.platform === platformToCheck && acc.is_active);
+    // Database stores 'meta' but frontend uses 'meta' as the platform identifier
+    return accounts.find((acc) => acc.platform === platform && acc.is_active);
   };
 
   const isConnected = (platform: string) => {
@@ -189,8 +188,12 @@ export default function SocialConnections({ businessId }: SocialConnectionsProps
               {account.token_expires_at && (
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-600">Token expires:</span>
-                  <span className="font-medium text-gray-900">
-                    {new Date(account.token_expires_at).toLocaleDateString()}
+                  <span className={`font-medium ${
+                    new Date(account.token_expires_at) > new Date() 
+                      ? 'text-green-600' 
+                      : 'text-red-600'
+                  }`}>
+                    {new Date(account.token_expires_at).toLocaleString()}
                   </span>
                 </div>
               )}

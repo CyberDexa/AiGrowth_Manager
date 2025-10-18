@@ -84,13 +84,19 @@ export default function SettingsPage() {
       const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/businesses/`;
       console.log('Fetching from:', url);
       
+      // Add timeout for Render cold starts
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+      
       const response = await fetch(url, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+        signal: controller.signal,
       });
       
+      clearTimeout(timeoutId);
       console.log('Response status:', response.status);
       
       if (response.ok) {
@@ -111,6 +117,13 @@ export default function SettingsPage() {
           name: error.name,
           stack: error.stack
         });
+        
+        // Show user-friendly error for timeout
+        if (error.name === 'AbortError') {
+          alert('⏰ Backend service is starting up (cold start). Please wait 30 seconds and refresh the page.');
+        } else if (error.message === 'Failed to fetch') {
+          alert('❌ Cannot connect to backend. Please check:\n1. Backend is running at ' + process.env.NEXT_PUBLIC_API_URL + '\n2. Check browser console for CORS errors\n3. Try refreshing in 30 seconds (cold start)');
+        }
       }
     } finally {
       setLoading(false);

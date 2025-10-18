@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { X, Linkedin, Twitter, Facebook, Instagram, Send, Calendar, AlertCircle, CheckCircle2, Loader2, Image as ImageIcon } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Linkedin, Twitter, Facebook, Instagram, Send, Calendar, AlertCircle, CheckCircle2, Loader2, Image as ImageIcon, RotateCcw } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
 import ImageSelector from '@/app/components/ImageSelector';
 
@@ -26,6 +26,7 @@ const PublishContentModal = ({
   onSuccess
 }: PublishContentModalProps) => {
   const { getToken } = useAuth();
+  const [editedContent, setEditedContent] = useState(content);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('linkedin');
   const [publishMode, setPublishMode] = useState<PublishMode>('now');
   const [scheduledDate, setScheduledDate] = useState('');
@@ -36,6 +37,11 @@ const PublishContentModal = ({
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedImageData, setSelectedImageData] = useState<any>(null);
   const [showImageSelector, setShowImageSelector] = useState(false);
+
+  // Update edited content when content prop changes
+  useEffect(() => {
+    setEditedContent(content);
+  }, [content]);
 
   if (!isOpen) return null;
 
@@ -76,7 +82,7 @@ const PublishContentModal = ({
   };
 
   const currentPlatform = platformConfig[selectedPlatform];
-  const characterCount = content.length;
+  const characterCount = editedContent.length;
   const maxCharacters = currentPlatform.maxChars;
   const isContentValid = characterCount > 0 && characterCount <= maxCharacters;
   
@@ -114,7 +120,7 @@ const PublishContentModal = ({
 
       const payload: any = {
         business_id: businessId,
-        content_text: content,
+        content_text: editedContent,
       };
 
       if (strategyId) {
@@ -284,14 +290,30 @@ const PublishContentModal = ({
             )}
           </div>
 
-          {/* Content Preview */}
+          {/* Content Editor */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Content Preview
-            </label>
-            <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 min-h-[150px] max-h-[300px] overflow-y-auto">
-              <p className="text-gray-900 whitespace-pre-wrap">{content}</p>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Edit Content
+              </label>
+              {editedContent !== content && (
+                <button
+                  onClick={() => setEditedContent(content)}
+                  disabled={publishing}
+                  className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 disabled:opacity-50"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  Reset to original
+                </button>
+              )}
             </div>
+            <textarea
+              value={editedContent}
+              onChange={(e) => setEditedContent(e.target.value)}
+              disabled={publishing}
+              className="w-full border border-gray-300 rounded-lg p-4 bg-white min-h-[150px] max-h-[300px] resize-y focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:bg-gray-50"
+              placeholder="Edit your content here..."
+            />
             <div className="mt-2 space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className={`${characterCount > maxCharacters ? 'text-red-600' : 'text-gray-500'}`}>

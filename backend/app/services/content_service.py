@@ -108,6 +108,19 @@ class ContentGenerationService:
                     num_posts
                 )
                 
+                # Validate and enforce character limits (especially Twitter)
+                if platform.lower() == "twitter":
+                    for post in parsed_content:
+                        full_text = f"{post['text']} {post['hashtags']}".strip()
+                        if len(full_text) > 280:
+                            # Truncate to 277 characters and add "..."
+                            max_length = 277
+                            truncated = full_text[:max_length] + "..."
+                            # Split back into text and hashtags
+                            post['text'] = truncated
+                            post['hashtags'] = ""
+                            post['_truncated'] = True
+                
                 return {
                     "success": True,
                     "content": parsed_content,
