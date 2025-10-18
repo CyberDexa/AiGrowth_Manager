@@ -27,7 +27,7 @@ async def get_simple_overview(
     # Verify business ownership
     business = db.query(Business).filter(
         Business.id == business_id,
-        Business.user_id == current_user["user_id"]
+        Business.user_id == current_user["sub"]
     ).first()
     
     if not business:
