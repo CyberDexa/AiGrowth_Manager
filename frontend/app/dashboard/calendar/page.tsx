@@ -159,7 +159,11 @@ export default function CalendarPage() {
       if (response.ok) {
         const data = await response.json();
         console.log('Scheduled posts loaded:', data);
-        setPosts(data.scheduled_posts || []);
+        console.log('Number of posts:', data.scheduled_posts?.length || 0);
+        console.log('Posts array:', data.scheduled_posts);
+        const postsArray = data.scheduled_posts || [];
+        setPosts(postsArray);
+        console.log('Posts state updated with:', postsArray);
       } else {
         const errorData = await response.json();
         console.error('Error loading posts:', errorData);
@@ -266,6 +270,9 @@ export default function CalendarPage() {
     end: new Date(post.scheduled_for),
     post,
   }));
+
+  console.log('Calendar events created:', events);
+  console.log('Number of events:', events.length);
 
   const eventStyleGetter = (event: CalendarEvent) => {
     const backgroundColor = getPlatformColor(event.post.platform);
