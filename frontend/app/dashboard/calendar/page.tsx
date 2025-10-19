@@ -145,30 +145,62 @@ export default function CalendarPage() {
       const token = await getToken();
       console.log('Loading scheduled posts for business:', businessId);
       
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v2/scheduled?business_id=${businessId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      // Load from both endpoints
+      const [scheduledResponse, publishedResponse] = await Promise.all([
+        // Get posts from scheduled_posts table (status: pending, publishing)
+        fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v2/scheduled?business_id=${businessId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        ),
+        // Get posts from published_posts table (status: scheduled)
+        fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/publishing/posts?business_id=${businessId}&status=scheduled`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+      ]);
 
-      console.log('Response status:', response.status);
+      console.log('Scheduled response status:', scheduledResponse.status);
+      console.log('Published response status:', publishedResponse.status);
 
-      if (response.ok) {
-        const data = await response.json();
+      const allPosts: ScheduledPost[] = [];
+
+      if (scheduledResponse.ok) {
+        const data = await scheduledResponse.json();
         console.log('Scheduled posts loaded:', data);
-        console.log('Number of posts:', data.scheduled_posts?.length || 0);
-        console.log('Posts array:', data.scheduled_posts);
-        const postsArray = data.scheduled_posts || [];
-        setPosts(postsArray);
-        console.log('Posts state updated with:', postsArray);
-      } else {
-        const errorData = await response.json();
-        console.error('Error loading posts:', errorData);
-        setError(errorData.detail || 'Failed to load scheduled posts');
+        allPosts.push(...(data.scheduled_posts || []));
       }
+
+      if (publishedResponse.ok) {
+        const data = await publishedResponse.json();
+        console.log('Published (scheduled) posts loaded:', data);
+        // Transform published_posts to match ScheduledPost interface
+        const scheduledPublishedPosts = (data.posts || [])
+          .filter((p: any) => p.status === 'scheduled' && p.scheduled_for)
+          .map((p: any) => ({
+            id: p.id,
+            content_text: p.content_text,
+            platform: p.platform,
+            social_account_id: p.business_id, // published_posts doesn't have social_account_id
+            scheduled_for: p.scheduled_for,
+            status: p.status,
+            celery_task_id: null,
+            created_at: p.created_at
+          }));
+        allPosts.push(...scheduledPublishedPosts);
+      }
+
+      console.log('Total posts:', allPosts.length);
+      console.log('All posts:', allPosts);
+      setPosts(allPosts);
+      console.log('Posts state updated with:', allPosts);
     } catch (error) {
       console.error('Error loading scheduled posts:', error);
       setError('Network error loading scheduled posts');
