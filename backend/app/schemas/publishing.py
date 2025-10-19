@@ -3,7 +3,7 @@ Publishing Schemas
 
 Pydantic schemas for content publishing API.
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List
 from pydantic import BaseModel, Field, validator
 
@@ -25,8 +25,12 @@ class PublishRequest(BaseModel):
     
     @validator('scheduled_for')
     def validate_scheduled_time(cls, v):
-        if v and v < datetime.utcnow():
-            raise ValueError('Scheduled time must be in the future')
+        if v:
+            # Make comparison timezone-aware
+            now = datetime.now(timezone.utc)
+            compare_time = v if v.tzinfo else v.replace(tzinfo=timezone.utc)
+            if compare_time < now:
+                raise ValueError('Scheduled time must be in the future')
         return v
 
 

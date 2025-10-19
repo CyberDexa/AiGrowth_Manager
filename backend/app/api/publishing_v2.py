@@ -4,7 +4,7 @@ Publishing API v2 Endpoints
 Clean API routes using the new publishing service architecture.
 Handles immediate publishing, multi-platform publishing, and scheduling.
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
@@ -290,7 +290,11 @@ async def schedule_post(
             raise HTTPException(status_code=403, detail="Access denied to this social account")
         
         # Check scheduled time is in future
-        if schedule_request.scheduled_for <= datetime.utcnow():
+        now = datetime.now(timezone.utc)
+        scheduled_time = schedule_request.scheduled_for
+        if scheduled_time.tzinfo is None:
+            scheduled_time = scheduled_time.replace(tzinfo=timezone.utc)
+        if scheduled_time <= now:
             raise HTTPException(status_code=400, detail="Scheduled time must be in the future")
         
         # Create scheduled post
@@ -434,7 +438,11 @@ async def update_scheduled_post(
         )
     
     # Validate future date
-    if update_request.scheduled_for <= datetime.utcnow():
+    now = datetime.now(timezone.utc)
+    scheduled_time = update_request.scheduled_for
+    if scheduled_time.tzinfo is None:
+        scheduled_time = scheduled_time.replace(tzinfo=timezone.utc)
+    if scheduled_time <= now:
         raise HTTPException(status_code=400, detail="Scheduled time must be in the future")
     
     # Update content if provided
