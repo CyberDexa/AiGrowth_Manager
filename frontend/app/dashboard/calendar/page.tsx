@@ -354,6 +354,20 @@ export default function CalendarPage() {
           </div>
         )}
 
+        {/* Info message when no posts */}
+        {!loading && !error && posts.length === 0 && (
+          <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-blue-900 font-medium mb-2">No scheduled posts found</p>
+            <p className="text-blue-700 text-sm mb-2">
+              The calendar only shows posts with status "pending" or "publishing".
+            </p>
+            <p className="text-blue-700 text-sm">
+              Check the <a href="/dashboard/scheduled" className="underline font-medium">Scheduled Posts</a> page to see all scheduled posts, 
+              or <a href="/dashboard/content" className="underline font-medium">create new content</a> and schedule it for later.
+            </p>
+          </div>
+        )}
+
         {/* Platform legend */}
         <div className="mt-4 flex items-center gap-4 text-sm">
           <span className="text-gray-600 font-medium">Platforms:</span>
