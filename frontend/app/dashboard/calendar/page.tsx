@@ -75,21 +75,59 @@ export default function CalendarPage() {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const storedBusiness = localStorage.getItem('selectedBusiness');
-    if (storedBusiness) {
+    const fetchBusinessId = async () => {
+      // First try to get from localStorage
+      const storedBusiness = localStorage.getItem('selectedBusiness');
+      if (storedBusiness) {
+        try {
+          const business = JSON.parse(storedBusiness);
+          console.log('Using stored business:', business);
+          setBusinessId(business.id);
+          return;
+        } catch (error) {
+          console.error('Error parsing stored business:', error);
+        }
+      }
+
+      // If no stored business, fetch the first business for the user
       try {
-        const business = JSON.parse(storedBusiness);
-        setBusinessId(business.id);
+        const token = await getToken();
+        console.log('Fetching businesses for user...');
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/businesses`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Businesses fetched:', data);
+          if (data.businesses && data.businesses.length > 0) {
+            const firstBusiness = data.businesses[0];
+            setBusinessId(firstBusiness.id);
+            // Store it for future use
+            localStorage.setItem('selectedBusiness', JSON.stringify(firstBusiness));
+            console.log('Set business ID to:', firstBusiness.id);
+          } else {
+            setError('No business found. Please create a business first in Settings.');
+            setLoading(false);
+          }
+        } else {
+          setError('Failed to fetch businesses');
+          setLoading(false);
+        }
       } catch (error) {
-        console.error('Error parsing stored business:', error);
-        setError('Failed to load business information. Please select a business from settings.');
+        console.error('Error fetching businesses:', error);
+        setError('Network error fetching businesses');
         setLoading(false);
       }
-    } else {
-      setError('No business selected. Please select a business from settings.');
-      setLoading(false);
-    }
-  }, []);
+    };
+
+    fetchBusinessId();
+  }, [getToken]);
 
   useEffect(() => {
     if (businessId) {
