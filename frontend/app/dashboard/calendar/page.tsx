@@ -77,8 +77,17 @@ export default function CalendarPage() {
   useEffect(() => {
     const storedBusiness = localStorage.getItem('selectedBusiness');
     if (storedBusiness) {
-      const business = JSON.parse(storedBusiness);
-      setBusinessId(business.id);
+      try {
+        const business = JSON.parse(storedBusiness);
+        setBusinessId(business.id);
+      } catch (error) {
+        console.error('Error parsing stored business:', error);
+        setError('Failed to load business information. Please select a business from settings.');
+        setLoading(false);
+      }
+    } else {
+      setError('No business selected. Please select a business from settings.');
+      setLoading(false);
     }
   }, []);
 
@@ -93,6 +102,8 @@ export default function CalendarPage() {
     setError(null);
     try {
       const token = await getToken();
+      console.log('Loading scheduled posts for business:', businessId);
+      
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v2/scheduled?business_id=${businessId}`,
         {
@@ -102,11 +113,15 @@ export default function CalendarPage() {
         }
       );
 
+      console.log('Response status:', response.status);
+
       if (response.ok) {
         const data = await response.json();
+        console.log('Scheduled posts loaded:', data);
         setPosts(data.scheduled_posts || []);
       } else {
         const errorData = await response.json();
+        console.error('Error loading posts:', errorData);
         setError(errorData.detail || 'Failed to load scheduled posts');
       }
     } catch (error) {
@@ -337,10 +352,7 @@ export default function CalendarPage() {
             components={{
               event: CustomEvent,
             }}
-            onEventDrop={handleEventDrop}
             onSelectEvent={handleSelectEvent}
-            draggableAccessor={() => !updateLoading}
-            resizable={false}
             views={['month', 'week', 'day', 'agenda']}
             defaultView="month"
           />
