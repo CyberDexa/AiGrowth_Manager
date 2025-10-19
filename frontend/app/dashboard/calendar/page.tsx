@@ -105,8 +105,9 @@ export default function CalendarPage() {
         if (response.ok) {
           const data = await response.json();
           console.log('Businesses fetched:', data);
-          if (data.businesses && data.businesses.length > 0) {
-            const firstBusiness = data.businesses[0];
+          // API returns array directly, not wrapped in {businesses: [...]}
+          if (Array.isArray(data) && data.length > 0) {
+            const firstBusiness = data[0];
             setBusinessId(firstBusiness.id);
             // Store it for future use
             localStorage.setItem('selectedBusiness', JSON.stringify(firstBusiness));
@@ -116,7 +117,9 @@ export default function CalendarPage() {
             setLoading(false);
           }
         } else {
-          setError('Failed to fetch businesses');
+          const errorData = await response.json();
+          console.error('Failed to fetch businesses:', errorData);
+          setError('Failed to fetch businesses: ' + (errorData.detail || 'Unknown error'));
           setLoading(false);
         }
       } catch (error) {
