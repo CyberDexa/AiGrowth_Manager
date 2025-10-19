@@ -13,9 +13,9 @@
 | **Phase** | 2: Core Development | MVP Complete by Jan 2026 |
 | **Days Elapsed** | 11 days | 98 days total |
 | **Completion** | 75% | 100% |
-| **Weekly Hours** | 24 hrs | 10-15 hrs/week avg |
+| **Weekly Hours** | 28 hrs | 10-15 hrs/week avg |
 | **Documents Created** | 27/15 | All core docs + summaries ✅ |
-| **Git Commits** | 51+ | - |
+| **Git Commits** | 60+ | - |
 | **API Endpoints** | 22 (calendar PATCH added) | Growing |
 | **Production Status** | ✅ LIVE | Backend + Database + Analytics + Calendar deployed |
 
@@ -274,6 +274,28 @@
   - Installed react-big-calendar, date-fns, @types/react-big-calendar
   - Configured dateFnsLocalizer with enUS locale
 - ✅ **Total Deliverable**: Fully functional content calendar with drag-and-drop scheduling, post management, and multi-view display
+
+### Week 3 (Oct 19, 2025) - Calendar Bug Fixes & Production Debugging 🐛
+- ✅ **Timezone DateTime Fixes**
+  - Fixed `TypeError: can't compare offset-naive and offset-aware datetimes`
+  - Updated `publishing.py` schema validator to handle timezone-aware comparisons
+  - Fixed POST `/v2/schedule` endpoint datetime validation
+  - Fixed PATCH `/v2/scheduled/{id}` endpoint datetime validation
+  - Imported `timezone` module for UTC-aware datetime comparisons
+- ✅ **Hydration Mismatch Fix**
+  - Fixed Next.js hydration warning caused by Clerk adding `jd-enabled` attribute
+  - Added `suppressHydrationWarning` to root HTML element
+- ✅ **Calendar Loading Issues**
+  - Fixed business auto-fetch when none selected in localStorage
+  - Fixed API response structure (array vs wrapped object)
+  - Added comprehensive error handling and debug logging
+  - Fixed calendar to query BOTH `scheduled_posts` and `published_posts` tables
+  - Resolved issue where posts with status "scheduled" (in published_posts) weren't showing
+- ✅ **Drag-and-Drop Temporarily Disabled**
+  - Removed drag-and-drop props causing TypeScript errors
+  - Requires react-big-calendar DnD addon (to be added in future update)
+  - Calendar fully functional with click-to-view and delete features
+- ✅ **Total Deliverable**: Production-ready calendar showing all scheduled posts from both database tables with proper timezone handling
 
 ### Week 3 (Oct 18, 2025) - Production Launch & Twitter Publishing 🚀
 - ✅ **Production Deployment Complete!**
