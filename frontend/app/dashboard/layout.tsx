@@ -4,6 +4,8 @@ import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BarChart3, BookmarkPlus, Calendar, FileText, Home, Settings, Target, Layers } from 'lucide-react';
+import { OnboardingProvider } from '@/contexts/OnboardingContext';
+import OnboardingChecklist from '@/components/OnboardingChecklist';
 
 export default function DashboardLayout({
   children,
@@ -24,9 +26,10 @@ export default function DashboardLayout({
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside className="hidden md:flex md:w-64 md:flex-col border-r bg-white">
+    <OnboardingProvider>
+      <div className="flex min-h-screen bg-gray-50">
+        {/* Sidebar */}
+        <aside className="hidden md:flex md:w-64 md:flex-col border-r bg-white">
         <div className="flex h-16 items-center gap-2 border-b px-6">
           <Target className="h-6 w-6 text-blue-600" />
           <span className="text-lg font-bold">AI Growth Manager</span>
@@ -66,5 +69,9 @@ export default function DashboardLayout({
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
     </div>
+
+      {/* Onboarding Checklist */}
+      <OnboardingChecklist />
+    </OnboardingProvider>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { Target, TrendingUp, Users, Calendar, Lightbulb, CheckCircle2, Sparkles } from 'lucide-react';
+import { useOnboarding } from '@/contexts/OnboardingContext';
 
 interface Business {
   id: number;
@@ -26,6 +27,7 @@ interface Strategy {
 
 export default function StrategiesPage() {
   const { getToken } = useAuth();
+  const { completeStep } = useOnboarding();
   const router = useRouter();
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [selectedBusiness, setSelectedBusiness] = useState<number | null>(null);
@@ -144,6 +146,10 @@ export default function StrategiesPage() {
     ];
 
     setStrategies(sampleStrategies);
+    
+    // Mark strategy step as complete
+    completeStep('strategy');
+    localStorage.setItem('has_strategies', 'true');
   };
 
   const getPriorityColor = (priority: string) => {

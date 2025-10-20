@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@clerk/nextjs';
 import { ArrowRight } from 'lucide-react';
 import { api } from '@/lib/api';
+import { useOnboarding } from '@/contexts/OnboardingContext';
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { getToken } = useAuth();
+  const { completeStep } = useOnboarding();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,6 +40,10 @@ export default function OnboardingPage() {
           target_audience: formData.targetAudience,
           marketing_goals: formData.goals,
         }, authToken);
+
+        // Mark business setup step as complete
+        completeStep('business');
+        localStorage.setItem('business_created', 'true');
 
         // Success - redirect to dashboard
         router.push('/dashboard');

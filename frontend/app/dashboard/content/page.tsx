@@ -6,6 +6,7 @@ import api from '@/lib/api';
 import { Pencil, Trash2, Calendar, Copy, CheckCircle, Send, BookmarkPlus, Check } from 'lucide-react';
 import CalendarView from '@/components/CalendarView';
 import PublishContentModal from '../strategies/components/PublishContentModal';
+import { useOnboarding } from '@/contexts/OnboardingContext';
 
 interface ContentItem {
   id: number;
@@ -22,6 +23,7 @@ interface ContentItem {
 
 export default function ContentPage() {
   const { getToken } = useAuth();
+  const { completeStep } = useOnboarding();
   const [businesses, setBusinesses] = useState<any[]>([]);
   const [selectedBusiness, setSelectedBusiness] = useState<number | null>(null);
   const [content, setContent] = useState<ContentItem[]>([]);
@@ -126,6 +128,10 @@ export default function ContentPage() {
       if (result.success) {
         setGeneratedContent(result.content);
         setActiveTab('library');
+        
+        // Mark content step as complete
+        completeStep('content');
+        localStorage.setItem('has_content', 'true');
       } else {
         setError('Failed to generate content');
       }

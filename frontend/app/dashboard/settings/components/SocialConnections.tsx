@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { Linkedin, Twitter, Facebook, CheckCircle2, XCircle, ExternalLink, Loader2 } from 'lucide-react';
+import { useOnboarding } from '@/contexts/OnboardingContext';
 
 interface SocialAccount {
   id: number;
@@ -20,6 +21,7 @@ interface SocialConnectionsProps {
 
 export default function SocialConnections({ businessId }: SocialConnectionsProps) {
   const { getToken } = useAuth();
+  const { completeStep } = useOnboarding();
   const [accounts, setAccounts] = useState<SocialAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState<string | null>(null);
@@ -46,6 +48,12 @@ export default function SocialConnections({ businessId }: SocialConnectionsProps
       if (response.ok) {
         const data = await response.json();
         setAccounts(data);
+        
+        // Check if any accounts are connected and mark step complete
+        if (data.length > 0 && data.some((acc: SocialAccount) => acc.is_active)) {
+          completeStep('social_accounts');
+          localStorage.setItem('has_social_accounts', 'true');
+        }
       }
     } catch (error) {
       console.error('Failed to load social accounts:', error);

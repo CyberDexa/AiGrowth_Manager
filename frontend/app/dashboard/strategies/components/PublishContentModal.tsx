@@ -5,6 +5,7 @@ import { X, Linkedin, Twitter, Facebook, Instagram, Send, Calendar, AlertCircle,
 import { useAuth } from '@clerk/nextjs';
 import ImageSelector from '@/app/components/ImageSelector';
 import PlatformPreview from '@/components/PlatformPreview';
+import { useOnboarding } from '@/contexts/OnboardingContext';
 
 interface PublishContentModalProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ const PublishContentModal = ({
   onSuccess
 }: PublishContentModalProps) => {
   const { getToken } = useAuth();
+  const { completeStep } = useOnboarding();
   const [editedContent, setEditedContent] = useState(content);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('linkedin');
   const [publishMode, setPublishMode] = useState<PublishMode>('now');
@@ -163,6 +165,10 @@ const PublishContentModal = ({
       const data = await response.json();
 
       setSuccess(true);
+      
+      // Mark publish step as complete
+      completeStep('publish');
+      localStorage.setItem('has_published', 'true');
       
       // Show success message for 2 seconds, then close
       setTimeout(() => {
