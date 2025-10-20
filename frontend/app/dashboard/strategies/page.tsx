@@ -543,7 +543,7 @@ export default function StrategiesPage() {
                           )}
                           
                           {/* Strategic Objectives */}
-                          {strategy.strategy_data.strategic_objectives && (
+                          {strategy.strategy_data.strategic_objectives && Array.isArray(strategy.strategy_data.strategic_objectives) && strategy.strategy_data.strategic_objectives.length > 0 && (
                             <div className="rounded-lg bg-white p-4 border border-purple-100">
                               <h5 className="font-semibold text-gray-900 mb-2">Strategic Objectives</h5>
                               <ul className="space-y-1">
@@ -558,7 +558,7 @@ export default function StrategiesPage() {
                           )}
                           
                           {/* Content Pillars */}
-                          {strategy.strategy_data.content_pillars && (
+                          {strategy.strategy_data.content_pillars && Array.isArray(strategy.strategy_data.content_pillars) && strategy.strategy_data.content_pillars.length > 0 && (
                             <div className="rounded-lg bg-white p-4 border border-purple-100">
                               <h5 className="font-semibold text-gray-900 mb-2">Content Pillars</h5>
                               <div className="flex flex-wrap gap-2">
