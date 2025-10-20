@@ -2,7 +2,7 @@
 Posting Time Recommendations API
 Analyzes engagement patterns to suggest optimal posting times
 """
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import func, and_, or_, case
@@ -291,7 +291,7 @@ async def get_posting_recommendations(
     )
 
 
-@router.get("/best-time-now", response_model=Dict[str, any])
+@router.get("/best-time-now", response_model=Dict[str, Any])
 async def get_best_time_now(
     business_id: int,
     platform: str,
