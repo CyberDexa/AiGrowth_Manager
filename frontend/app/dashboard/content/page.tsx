@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import api from '@/lib/api';
-import { Pencil, Trash2, Calendar, Copy, CheckCircle, Send } from 'lucide-react';
+import { Pencil, Trash2, Calendar, Copy, CheckCircle, Send, BookmarkPlus, Check } from 'lucide-react';
 import CalendarView from '@/components/CalendarView';
 import PublishContentModal from '../strategies/components/PublishContentModal';
 
@@ -37,6 +37,10 @@ export default function ContentPage() {
   const [topic, setTopic] = useState('');
   const [numPosts, setNumPosts] = useState(1);
   const [generatedContent, setGeneratedContent] = useState<any[]>([]);
+
+  // Content Library state
+  const [savingContentId, setSavingContentId] = useState<number | null>(null);
+  const [savedContent, setSavedContent] = useState<Set<number>>(new Set());
 
   // Edit modal state
   const [editingContent, setEditingContent] = useState<ContentItem | null>(null);
@@ -133,15 +137,15 @@ export default function ContentPage() {
     }
   };
 
-  const handleSaveContent = async (contentData: any, scheduledFor?: string) => {
+  const handleSaveContent = async (contentData: any, scheduledFor?: string, index?: number) => {
     try {
       const token = await getToken();
       if (!token || !selectedBusiness) return;
 
-      await api.content.create(
+      const result = await api.content.create(
         {
           business_id: selectedBusiness,
-          platform: contentData.platform,
+          platform: contentData.platform || platform,
           content_type: contentType,
           tone,
           text: contentData.text,
@@ -151,12 +155,50 @@ export default function ContentPage() {
         token
       );
 
+      // Update generatedContent with the ID from saved content
+      if (result && result.id !== undefined && index !== undefined) {
+        setGeneratedContent(prev => 
+          prev.map((item, i) => i === index ? { ...item, id: result.id } : item)
+        );
+      }
+
       // Reload content list
       await loadContent();
-      setGeneratedContent([]);
     } catch (err) {
       console.error('Failed to save content:', err);
       setError('Failed to save content');
+    }
+  };
+
+  const saveToLibrary = async (contentId: number) => {
+    try {
+      setSavingContentId(contentId);
+      const token = await getToken();
+      if (!token) return;
+
+      const response = await fetch('/api/v1/content-library/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          source: 'content',
+          item_id: contentId,
+        }),
+      });
+
+      if (response.ok) {
+        setSavedContent(prev => new Set([...prev, contentId]));
+      } else {
+        console.error('Failed to save to library:', await response.text());
+        setError('Failed to save to library');
+      }
+    } catch (err) {
+      console.error('Failed to save to library:', err);
+      setError('Failed to save to library');
+    } finally {
+      setSavingContentId(null);
     }
   };
 
@@ -413,12 +455,38 @@ export default function ContentPage() {
                         <span className="text-sm font-medium text-gray-500">
                           Post {index + 1}
                         </span>
-                        <button
-                          onClick={() => handleSaveContent(item)}
-                          className="rounded bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700"
-                        >
-                          Save to Library
-                        </button>
+                                                <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleSaveContent(item, undefined, index)}
+                            className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700"
+                          >
+                            Save as Draft
+                          </button>
+                          {item.id && savedContent.has(item.id) ? (
+                            <span className="inline-flex items-center gap-1 rounded bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+                              <Check className="h-3.5 w-3.5" />
+                              Saved
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => item.id && saveToLibrary(item.id)}
+                              disabled={!item.id || savingContentId === item.id}
+                              className="inline-flex items-center gap-1 rounded bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700 disabled:bg-gray-400"
+                            >
+                              {savingContentId === item.id ? (
+                                <>
+                                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                                  Saving...
+                                </>
+                              ) : (
+                                <>
+                                  <BookmarkPlus className="h-3.5 w-3.5" />
+                                  Save to Library
+                                </>
+                              )}
+                            </button>
+                          )}
+                        </div>
                       </div>
                       <p className="whitespace-pre-wrap text-gray-900">{item.text}</p>
                       {item.hashtags && (
