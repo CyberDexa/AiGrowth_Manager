@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Clock, TrendingUp, Calendar, Lightbulb, Check, AlertCircle } from 'lucide-react';
 
 interface TimeSlot {
@@ -56,7 +56,7 @@ const getDayAbbreviation = (day: string): string => {
   return day.substring(0, 3);
 };
 
-export default function PostingInsights({ businessId, getToken }: PostingInsightsProps) {
+const PostingInsights = React.memo(({ businessId, getToken }: PostingInsightsProps) => {
   const [recommendations, setRecommendations] = useState<RecommendationsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -260,4 +260,8 @@ export default function PostingInsights({ businessId, getToken }: PostingInsight
       </div>
     </div>
   );
-}
+});
+
+PostingInsights.displayName = 'PostingInsights';
+
+export default PostingInsights;

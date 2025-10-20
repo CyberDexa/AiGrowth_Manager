@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useMemo } from 'react';
 import { Twitter, Linkedin, Facebook, Instagram } from 'lucide-react';
 
 interface PlatformPreviewProps {
@@ -73,21 +74,39 @@ const formatContent = (text: string, platform: string) => {
   return formatted;
 };
 
-const PlatformPreview = ({ content, platforms = ['twitter', 'linkedin', 'facebook'], showAll = false }: PlatformPreviewProps) => {
-  const displayPlatforms = showAll ? ['twitter', 'linkedin', 'facebook', 'instagram'] : platforms;
+const PlatformPreview = React.memo(({ content, platforms = ['twitter', 'linkedin', 'facebook'], showAll = false }: PlatformPreviewProps) => {
+  // Memoize platform list to avoid recalculation
+  const displayPlatforms = useMemo(() => {
+    return showAll ? ['twitter', 'linkedin', 'facebook', 'instagram'] : platforms;
+  }, [showAll, platforms]);
+
+  // Memoize platform data calculations to prevent unnecessary re-renders
+  const platformData = useMemo(() => {
+    return displayPlatforms.map((platform) => {
+      const charLimit = CHAR_LIMITS[platform as keyof typeof CHAR_LIMITS];
+      const charCount = content.length;
+      const isOverLimit = charCount > charLimit;
+      const colors = PLATFORM_COLORS[platform as keyof typeof PLATFORM_COLORS];
+      const truncatedContent = isOverLimit ? content.slice(0, charLimit) : content;
+      const formattedContent = formatContent(truncatedContent, platform);
+
+      return {
+        platform,
+        charLimit,
+        charCount,
+        isOverLimit,
+        colors,
+        formattedContent,
+      };
+    });
+  }, [displayPlatforms, content]);
 
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-gray-900">Platform Preview</h3>
       
       <div className="grid gap-4 md:grid-cols-2">
-        {displayPlatforms.map((platform) => {
-          const charLimit = CHAR_LIMITS[platform as keyof typeof CHAR_LIMITS];
-          const charCount = content.length;
-          const isOverLimit = charCount > charLimit;
-          const colors = PLATFORM_COLORS[platform as keyof typeof PLATFORM_COLORS];
-          const truncatedContent = isOverLimit ? content.slice(0, charLimit) : content;
-          const formattedContent = formatContent(truncatedContent, platform);
+        {platformData.map(({ platform, charLimit, charCount, isOverLimit, colors, formattedContent }) => {
 
           return (
             <div
@@ -185,6 +204,8 @@ const PlatformPreview = ({ content, platforms = ['twitter', 'linkedin', 'faceboo
       </div>
     </div>
   );
-};
+});
+
+PlatformPreview.displayName = 'PlatformPreview';
 
 export default PlatformPreview;

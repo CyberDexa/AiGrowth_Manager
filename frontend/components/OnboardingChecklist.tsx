@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { 
@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import Confetti from 'react-confetti';
 
-export default function OnboardingChecklist() {
+const OnboardingChecklist = React.memo(() => {
   const { 
     steps, 
     isComplete, 
@@ -219,4 +219,8 @@ export default function OnboardingChecklist() {
       </div>
     </>
   );
-}
+});
+
+OnboardingChecklist.displayName = 'OnboardingChecklist';
+
+export default OnboardingChecklist;
