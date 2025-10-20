@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import api from '@/lib/api';
 import SyncStatus from '@/app/components/SyncStatus';
+import PostingInsights from '@/components/PostingInsights';
 import { 
   TrendingUp, 
   Users, 
@@ -428,6 +429,16 @@ export default function AnalyticsPage() {
                 </ResponsiveContainer>
               </div>
             </div>
+
+            {/* Posting Time Recommendations */}
+            {selectedBusiness && (
+              <div className="mt-6">
+                <PostingInsights 
+                  businessId={selectedBusiness} 
+                  getToken={getToken}
+                />
+              </div>
+            )}
 
             {/* Content Performance Table */}
             <div className="mt-6 rounded-lg border bg-white shadow-sm">
