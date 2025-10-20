@@ -27,10 +27,10 @@
 
 ## ✨ Features
 
-### 🎯 AI Strategy Generation *(Coming Soon)*
-Our AI will analyze your business and create a custom 12-week marketing strategy with content pillars, target audiences, and growth tactics tailored to your industry and goals.
+### 🎯 AI Strategy Generation
+Our AI analyzes your business and creates a custom 12-week marketing strategy with content pillars, target audiences, and growth tactics tailored to your industry and goals.
 
-**Planned Capabilities:**
+**Key Capabilities:**
 - Industry-specific strategy templates
 - Competitive analysis insights
 - Target audience profiling

@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { Target, TrendingUp, Users, Calendar, Lightbulb, CheckCircle2, Sparkles } from 'lucide-react';
+import { Target, TrendingUp, Users, Calendar, Lightbulb, CheckCircle2, Sparkles, X, Loader2 } from 'lucide-react';
 import { useOnboarding } from '@/contexts/OnboardingContext';
+import toast from 'react-hot-toast';
 
 interface Business {
   id: number;
@@ -12,6 +13,18 @@ interface Business {
   industry: string;
   target_audience?: string;
   goals?: string[];
+  description?: string;
+  marketing_goals?: string;
+}
+
+interface AIStrategy {
+  id: number;
+  business_id: number;
+  title: string;
+  description: string;
+  strategy_data: any;
+  status: string;
+  created_at: string;
 }
 
 interface Strategy {
@@ -33,6 +46,10 @@ export default function StrategiesPage() {
   const [selectedBusiness, setSelectedBusiness] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [strategies, setStrategies] = useState<Strategy[]>([]);
+  const [aiStrategies, setAiStrategies] = useState<AIStrategy[]>([]);
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [additionalContext, setAdditionalContext] = useState('');
 
   useEffect(() => {
     loadBusinesses();
@@ -41,6 +58,7 @@ export default function StrategiesPage() {
   useEffect(() => {
     if (selectedBusiness) {
       loadStrategies();
+      loadAIStrategies();
     }
   }, [selectedBusiness]);
 
@@ -61,6 +79,81 @@ export default function StrategiesPage() {
       console.error('Failed to load businesses:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadAIStrategies = async () => {
+    if (!selectedBusiness) return;
+    
+    try {
+      const token = await getToken();
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/strategies/?business_id=${selectedBusiness}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setAiStrategies(data);
+        if (data.length > 0) {
+          completeStep('strategy');
+          localStorage.setItem('has_strategies', 'true');
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load AI strategies:', error);
+    }
+  };
+
+  const generateAIStrategy = async () => {
+    if (!selectedBusiness) return;
+    
+    const business = businesses.find(b => b.id === selectedBusiness);
+    if (!business) return;
+
+    // Validate business has required info
+    if (!business.name || !business.description) {
+      toast.error('Please complete your business profile in Settings first');
+      router.push('/dashboard/settings');
+      return;
+    }
+
+    setGenerating(true);
+    try {
+      const token = await getToken();
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/strategies/generate`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            business_id: selectedBusiness,
+            additional_context: additionalContext || undefined,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const newStrategy = await response.json();
+        setAiStrategies(prev => [newStrategy, ...prev]);
+        toast.success('AI Strategy generated successfully!');
+        setShowGenerateModal(false);
+        setAdditionalContext('');
+        completeStep('strategy');
+        localStorage.setItem('has_strategies', 'true');
+      } else {
+        const error = await response.json();
+        toast.error(error.detail || 'Failed to generate strategy');
+      }
+    } catch (error) {
+      console.error('Failed to generate strategy:', error);
+      toast.error('Failed to generate strategy. Please try again.');
+    } finally {
+      setGenerating(false);
     }
   };
 
@@ -409,15 +502,176 @@ export default function StrategiesPage() {
                 </div>
               </div>
               <button 
-                onClick={() => alert('AI Strategy Generator coming soon! This will analyze your business and create a custom marketing strategy.')}
-                className="mt-4 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700"
+                onClick={() => setShowGenerateModal(true)}
+                className="mt-4 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 transition-colors"
               >
-                Generate Custom Strategy
+                Generate Custom Strategy with AI
               </button>
             </div>
           </div>
         </div>
+
+        {/* AI-Generated Strategies Section */}
+        {aiStrategies.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">AI-Generated Strategies</h3>
+            <div className="space-y-4">
+              {aiStrategies.map((strategy) => (
+                <div
+                  key={strategy.id}
+                  className="rounded-lg border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 p-6"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3">
+                        <Sparkles className="h-6 w-6 text-purple-600" />
+                        <h4 className="text-lg font-bold text-gray-900">{strategy.title}</h4>
+                        <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-700">
+                          AI Generated
+                        </span>
+                      </div>
+                      <p className="mt-2 text-gray-700">{strategy.description}</p>
+                      
+                      {strategy.strategy_data && (
+                        <div className="mt-4 space-y-4">
+                          {/* Executive Summary */}
+                          {strategy.strategy_data.executive_summary && (
+                            <div className="rounded-lg bg-white p-4 border border-purple-100">
+                              <h5 className="font-semibold text-gray-900 mb-2">Executive Summary</h5>
+                              <p className="text-sm text-gray-700">{strategy.strategy_data.executive_summary}</p>
+                            </div>
+                          )}
+                          
+                          {/* Strategic Objectives */}
+                          {strategy.strategy_data.strategic_objectives && (
+                            <div className="rounded-lg bg-white p-4 border border-purple-100">
+                              <h5 className="font-semibold text-gray-900 mb-2">Strategic Objectives</h5>
+                              <ul className="space-y-1">
+                                {strategy.strategy_data.strategic_objectives.map((obj: string, idx: number) => (
+                                  <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+                                    <Target className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                                    <span>{obj}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          
+                          {/* Content Pillars */}
+                          {strategy.strategy_data.content_pillars && (
+                            <div className="rounded-lg bg-white p-4 border border-purple-100">
+                              <h5 className="font-semibold text-gray-900 mb-2">Content Pillars</h5>
+                              <div className="flex flex-wrap gap-2">
+                                {strategy.strategy_data.content_pillars.map((pillar: string, idx: number) => (
+                                  <span
+                                    key={idx}
+                                    className="rounded-full bg-purple-100 px-3 py-1 text-sm text-purple-700"
+                                  >
+                                    {pillar}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
+                      <div className="mt-4 flex gap-3">
+                        <button 
+                          onClick={() => router.push('/dashboard/content')}
+                          className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 transition-colors"
+                        >
+                          <Sparkles className="h-4 w-4" />
+                          Create Content from Strategy
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Generate Strategy Modal */}
+      {showGenerateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="relative w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl">
+            <button
+              onClick={() => setShowGenerateModal(false)}
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="rounded-lg bg-purple-100 p-2">
+                  <Sparkles className="h-6 w-6 text-purple-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">Generate AI Marketing Strategy</h3>
+              </div>
+              <p className="text-gray-600">
+                Our AI will analyze your business and create a comprehensive 12-week marketing strategy.
+              </p>
+            </div>
+
+            {selectedBusiness && businesses.find(b => b.id === selectedBusiness) && (
+              <div className="mb-6 rounded-lg bg-gray-50 p-4 border border-gray-200">
+                <h4 className="font-semibold text-gray-900 mb-2">Business Information</h4>
+                <div className="space-y-1 text-sm text-gray-700">
+                  <p><span className="font-medium">Name:</span> {businesses.find(b => b.id === selectedBusiness)?.name}</p>
+                  <p><span className="font-medium">Industry:</span> {businesses.find(b => b.id === selectedBusiness)?.industry}</p>
+                  {businesses.find(b => b.id === selectedBusiness)?.target_audience && (
+                    <p><span className="font-medium">Target Audience:</span> {businesses.find(b => b.id === selectedBusiness)?.target_audience}</p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Additional Context (Optional)
+              </label>
+              <textarea
+                value={additionalContext}
+                onChange={(e) => setAdditionalContext(e.target.value)}
+                placeholder="Any specific goals, challenges, or information that would help create a better strategy..."
+                className="w-full rounded-lg border border-gray-300 p-3 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+                rows={4}
+              />
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowGenerateModal(false)}
+                disabled={generating}
+                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={generateAIStrategy}
+                disabled={generating}
+                className="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
+              >
+                {generating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Generating Strategy...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    Generate Strategy
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
