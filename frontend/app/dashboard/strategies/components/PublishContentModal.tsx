@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { X, Linkedin, Twitter, Facebook, Instagram, Send, Calendar, AlertCircle, CheckCircle2, Loader2, Image as ImageIcon, RotateCcw } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
 import ImageSelector from '@/app/components/ImageSelector';
+import PlatformPreview from '@/components/PlatformPreview';
 
 interface PublishContentModalProps {
   isOpen: boolean;
@@ -340,6 +341,14 @@ const PublishContentModal = ({
               )}
             </div>
           </div>
+
+          {/* Platform Preview */}
+          {editedContent && (
+            <PlatformPreview 
+              content={editedContent} 
+              platforms={[selectedPlatform]}
+            />
+          )}
 
           {/* Publishing Options */}
           <div>
