@@ -68,6 +68,10 @@ class Content(Base):
     ai_generated = Column(Boolean, default=True)
     ai_model = Column(String, default="gpt-4")
     
+    # Content Library
+    saved_to_library = Column(Boolean, default=False, nullable=False, index=True)
+    library_saved_at = Column(DateTime, nullable=True)
+    
     # Timestamps
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)

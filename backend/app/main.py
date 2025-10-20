@@ -108,7 +108,7 @@ async def health_check():
     }
 
 # Include routers
-from app.api import users, businesses, strategies, content, analytics, analytics_simple, social, publishing, images, scheduler, oauth, publishing_v2
+from app.api import users, businesses, strategies, content, analytics, analytics_simple, social, publishing, images, scheduler, oauth, publishing_v2, content_library
 
 app.include_router(users.router, prefix="/api/v1")
 app.include_router(businesses.router, prefix="/api/v1")
@@ -120,6 +120,7 @@ app.include_router(social.router, prefix="/api/v1", tags=["social"])
 app.include_router(publishing.router, prefix="/api/v1", tags=["publishing"])  # Legacy publishing
 app.include_router(publishing_v2.router, prefix="/api", tags=["publishing-v2"])  # New publishing API
 app.include_router(images.router, prefix="/api/v1", tags=["images"])
+app.include_router(content_library.router, prefix="/api/v1", tags=["content-library"])
 app.include_router(scheduler.router, tags=["scheduler"])
 app.include_router(oauth.router, prefix="/api/v1", tags=["oauth"])
 

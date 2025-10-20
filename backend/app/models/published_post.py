@@ -52,6 +52,10 @@ class PublishedPost(Base):
     impressions_count = Column(Integer, default=0)
     last_metrics_sync = Column(TIMESTAMP, nullable=True)
     
+    # Content Library
+    saved_to_library = Column(Boolean, default=False, nullable=False, index=True)
+    library_saved_at = Column(TIMESTAMP, nullable=True)
+    
     # Metadata
     created_at = Column(TIMESTAMP, default=datetime.utcnow, nullable=False)
     updated_at = Column(TIMESTAMP, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
