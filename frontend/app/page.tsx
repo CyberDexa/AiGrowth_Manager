@@ -1,5 +1,17 @@
 import Link from 'next/link';
-import { ArrowRight, Sparkles, Target, TrendingUp, Zap } from 'lucide-react';
+import { 
+  ArrowRight, 
+  Sparkles, 
+  Target, 
+  TrendingUp, 
+  Zap, 
+  FileText, 
+  Calendar, 
+  BarChart3, 
+  BookOpen, 
+  Clock, 
+  CheckCircle2 
+} from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -91,95 +103,137 @@ export default function HomePage() {
       <section id="features" className="container mx-auto px-4 py-20">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-gray-900">
-            Everything you need to grow
+            Everything you need to grow your business
           </h2>
           <p className="mt-4 text-xl text-gray-700">
-            An autonomous AI marketing system that works 24/7
+            A complete autonomous AI marketing system that works 24/7 so you don&apos;t have to
           </p>
         </div>
 
         <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {/* Feature 1 */}
+          {/* Feature 1: AI Strategy Generation */}
           <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-violet-300 hover:shadow-xl transition-all duration-300">
             <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-violet-600 shadow-lg group-hover:scale-110 transition-transform">
               <Target className="h-7 w-7 text-white" />
             </div>
             <h3 className="mt-6 text-xl font-bold text-gray-900">
-              AI Strategy Builder
+              🎯 AI Strategy Generation
             </h3>
             <p className="mt-3 text-gray-700 leading-relaxed">
-              Describe your business and get a complete marketing strategy tailored
-              to your goals and audience.
+              Tell us about your business and our AI creates a complete 12-week marketing
+              strategy with content pillars, target audiences, and growth tactics.
             </p>
           </div>
 
-          {/* Feature 2 */}
+          {/* Feature 2: AI Content Creation */}
           <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-teal-300 hover:shadow-xl transition-all duration-300">
             <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-lg group-hover:scale-110 transition-transform">
               <Sparkles className="h-7 w-7 text-white" />
             </div>
             <h3 className="mt-6 text-xl font-bold text-gray-900">
-              Content Generation
+              ✨ AI Content Creation
             </h3>
             <p className="mt-3 text-gray-700 leading-relaxed">
-              Generate engaging posts, threads, and articles for all your social
-              media platforms in seconds.
+              Generate platform-optimized posts in seconds. Our AI adapts content length
+              and style for Twitter, LinkedIn, Facebook, and Instagram automatically.
             </p>
           </div>
 
-          {/* Feature 3 */}
+          {/* Feature 3: Multi-Platform Publishing */}
           <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-violet-300 hover:shadow-xl transition-all duration-300">
             <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-teal-500 shadow-lg group-hover:scale-110 transition-transform">
               <Zap className="h-7 w-7 text-white" />
             </div>
             <h3 className="mt-6 text-xl font-bold text-gray-900">
-              Auto-Posting
+              ⚡ Multi-Platform Publishing
             </h3>
             <p className="mt-3 text-gray-700 leading-relaxed">
-              Schedule and publish content automatically to LinkedIn, Twitter,
-              Facebook, and Instagram.
+              Publish to all your social accounts with one click. Schedule posts or
+              publish immediately to Twitter, LinkedIn, Facebook, and Instagram.
             </p>
           </div>
 
-          {/* Feature 4 */}
+          {/* Feature 4: Content Templates */}
           <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-teal-300 hover:shadow-xl transition-all duration-300">
             <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-teal-600 to-violet-500 shadow-lg group-hover:scale-110 transition-transform">
-              <TrendingUp className="h-7 w-7 text-white" />
+              <FileText className="h-7 w-7 text-white" />
             </div>
             <h3 className="mt-6 text-xl font-bold text-gray-900">
-              Performance Analytics
+              📝 Content Templates
             </h3>
             <p className="mt-3 text-gray-700 leading-relaxed">
-              Track engagement, reach, and conversions. Know what's working and
-              what's not.
+              Create reusable templates for product launches, promotions, and announcements.
+              Fill in placeholders and generate consistent content in seconds.
             </p>
           </div>
 
-          {/* Feature 5 */}
+          {/* Feature 5: Analytics Dashboard */}
           <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-violet-300 hover:shadow-xl transition-all duration-300">
             <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-violet-700 shadow-lg group-hover:scale-110 transition-transform">
-              <Target className="h-7 w-7 text-white" />
+              <BarChart3 className="h-7 w-7 text-white" />
             </div>
             <h3 className="mt-6 text-xl font-bold text-gray-900">
-              Smart Optimization
+              📊 Analytics Dashboard
             </h3>
             <p className="mt-3 text-gray-700 leading-relaxed">
-              AI learns from your results and continuously improves your content
-              and posting times.
+              Track reach, engagement, and growth across all platforms. Beautiful charts
+              show what content performs best and when to post for maximum impact.
             </p>
           </div>
 
-          {/* Feature 6 */}
+          {/* Feature 6: Posting Time Recommendations */}
           <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-teal-300 hover:shadow-xl transition-all duration-300">
             <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-700 shadow-lg group-hover:scale-110 transition-transform">
-              <Sparkles className="h-7 w-7 text-white" />
+              <Clock className="h-7 w-7 text-white" />
             </div>
             <h3 className="mt-6 text-xl font-bold text-gray-900">
-              Multi-Platform Support
+              ⏰ Smart Posting Times
             </h3>
             <p className="mt-3 text-gray-700 leading-relaxed">
-              Manage all your social media from one place. LinkedIn, Twitter, Meta,
-              and more.
+              AI analyzes your audience engagement patterns and recommends the best times
+              to post on each platform for maximum reach and interaction.
+            </p>
+          </div>
+
+          {/* Feature 7: Content Library */}
+          <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-violet-300 hover:shadow-xl transition-all duration-300">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-violet-500 shadow-lg group-hover:scale-110 transition-transform">
+              <BookOpen className="h-7 w-7 text-white" />
+            </div>
+            <h3 className="mt-6 text-xl font-bold text-gray-900">
+              📚 Content Library
+            </h3>
+            <p className="mt-3 text-gray-700 leading-relaxed">
+              Save your best-performing content for reuse. Build a library of proven posts
+              and adapt them for future campaigns.
+            </p>
+          </div>
+
+          {/* Feature 8: Scheduled Calendar */}
+          <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-teal-300 hover:shadow-xl transition-all duration-300">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-teal-600 to-teal-500 shadow-lg group-hover:scale-110 transition-transform">
+              <Calendar className="h-7 w-7 text-white" />
+            </div>
+            <h3 className="mt-6 text-xl font-bold text-gray-900">
+              📅 Visual Calendar
+            </h3>
+            <p className="mt-3 text-gray-700 leading-relaxed">
+              See all your scheduled posts at a glance. Drag and drop to reschedule,
+              edit upcoming content, and maintain a consistent posting rhythm.
+            </p>
+          </div>
+
+          {/* Feature 9: Guided Onboarding */}
+          <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-violet-300 hover:shadow-xl transition-all duration-300">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-teal-500 shadow-lg group-hover:scale-110 transition-transform">
+              <CheckCircle2 className="h-7 w-7 text-white" />
+            </div>
+            <h3 className="mt-6 text-xl font-bold text-gray-900">
+              ✅ Guided Onboarding
+            </h3>
+            <p className="mt-3 text-gray-700 leading-relaxed">
+              Interactive checklist walks you through setup step-by-step. Connect accounts,
+              create your first strategy, and publish content in under 10 minutes.
             </p>
           </div>
         </div>
