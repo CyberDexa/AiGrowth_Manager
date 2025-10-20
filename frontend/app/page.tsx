@@ -111,8 +111,13 @@ export default function HomePage() {
         </div>
 
         <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {/* Feature 1: AI Strategy Generation */}
-          <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-violet-300 hover:shadow-xl transition-all duration-300">
+          {/* Feature 1: AI Strategy Generation - Coming Soon */}
+          <div className="group rounded-2xl border-2 border-gray-200 bg-white p-8 hover:border-violet-300 hover:shadow-xl transition-all duration-300 relative">
+            <div className="absolute top-4 right-4">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-violet-100 text-violet-700">
+                Coming Soon
+              </span>
+            </div>
             <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-violet-600 shadow-lg group-hover:scale-110 transition-transform">
               <Target className="h-7 w-7 text-white" />
             </div>
@@ -120,8 +125,8 @@ export default function HomePage() {
               🎯 AI Strategy Generation
             </h3>
             <p className="mt-3 text-gray-700 leading-relaxed">
-              Tell us about your business and our AI creates a complete 12-week marketing
-              strategy with content pillars, target audiences, and growth tactics.
+              Our AI will analyze your business and create a custom 12-week marketing
+              strategy with content pillars, target audiences, and growth tactics tailored to your goals.
             </p>
           </div>
 
