@@ -77,8 +77,19 @@ async def startup_event():
     Application startup event handler.
     
     Initializes background services like the analytics sync scheduler.
+    Runs database migrations on startup.
     """
     logger.info("Starting AI Growth Manager API...")
+    
+    # Run database migrations
+    try:
+        from app.db.migrations import run_startup_migrations
+        logger.info("Running database migrations...")
+        run_startup_migrations()
+        logger.info("Database migrations completed")
+    except Exception as e:
+        logger.error(f"Failed to run database migrations: {e}", exc_info=True)
+        # Don't crash the app - allow it to start even if migrations fail
     
     # Start background scheduler
     try:
