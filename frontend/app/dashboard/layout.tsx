@@ -1,9 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, BookmarkPlus, Calendar, FileText, Home, Settings, Target, Layers } from 'lucide-react';
+import { BarChart3, BookmarkPlus, Calendar, FileText, Home, Settings, Target, Layers, Menu, X } from 'lucide-react';
 import { OnboardingProvider } from '@/contexts/OnboardingContext';
 import OnboardingChecklist from '@/components/OnboardingChecklist';
 
@@ -13,6 +14,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
@@ -28,11 +30,31 @@ export default function DashboardLayout({
   return (
     <OnboardingProvider>
       <div className="flex min-h-screen bg-gray-50">
+        {/* Mobile Sidebar Overlay */}
+        {mobileMenuOpen && (
+          <div 
+            className="fixed inset-0 z-40 bg-black bg-opacity-50 md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
-        <aside className="hidden md:flex md:w-64 md:flex-col border-r bg-white">
-        <div className="flex h-16 items-center gap-2 border-b px-6">
-          <Target className="h-6 w-6 text-blue-600" />
-          <span className="text-lg font-bold">AI Growth Manager</span>
+        <aside className={`
+          fixed inset-y-0 left-0 z-50 w-64 transform bg-white border-r transition-transform duration-300 ease-in-out
+          md:relative md:translate-x-0 md:flex md:flex-col
+          ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}>
+        <div className="flex h-16 items-center justify-between border-b px-6">
+          <div className="flex items-center gap-2">
+            <Target className="h-6 w-6 text-blue-600" />
+            <span className="text-lg font-bold">AI Growth Manager</span>
+          </div>
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="md:hidden rounded-lg p-2 hover:bg-gray-100"
+          >
+            <X className="h-5 w-5 text-gray-600" />
+          </button>
         </div>
         <nav className="flex-1 space-y-1 px-3 py-4">
           {navigation.map((item) => {
@@ -41,6 +63,7 @@ export default function DashboardLayout({
               <Link
                 key={item.name}
                 href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium ${
                   isActive
                     ? 'bg-gray-100 text-gray-900'
@@ -58,10 +81,18 @@ export default function DashboardLayout({
       {/* Main Content */}
       <div className="flex flex-1 flex-col">
         {/* Header */}
-        <header className="flex h-16 items-center justify-between border-b bg-white px-6">
-          <h1 className="text-xl font-semibold">
-            {navigation.find((item) => item.href === pathname)?.name || 'Dashboard'}
-          </h1>
+        <header className="flex h-16 items-center justify-between border-b bg-white px-4 md:px-6">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="md:hidden rounded-lg p-2 hover:bg-gray-100"
+            >
+              <Menu className="h-5 w-5 text-gray-600" />
+            </button>
+            <h1 className="text-lg md:text-xl font-semibold">
+              {navigation.find((item) => item.href === pathname)?.name || 'Dashboard'}
+            </h1>
+          </div>
           <UserButton afterSignOutUrl="/" />
         </header>
 

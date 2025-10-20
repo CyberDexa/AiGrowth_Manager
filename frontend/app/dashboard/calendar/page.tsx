@@ -401,7 +401,7 @@ export default function CalendarPage() {
         )}
 
         {/* Platform legend */}
-        <div className="mt-4 flex items-center gap-4 text-sm">
+        <div className="mt-4 flex flex-wrap items-center gap-3 md:gap-4 text-sm">
           <span className="text-gray-600 font-medium">Platforms:</span>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: getPlatformColor('twitter') }}></div>
@@ -419,7 +419,7 @@ export default function CalendarPage() {
       </div>
 
       {/* Calendar */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4" style={{ height: '700px' }}>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2 md:p-4 h-[500px] md:h-[700px]">
         {posts.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <CalendarIcon className="h-16 w-16 text-gray-300 mb-4" />

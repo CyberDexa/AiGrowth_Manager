@@ -65,7 +65,7 @@ export default function OnboardingChecklist() {
         />
       )}
       
-      <div className="fixed bottom-6 right-6 z-50 w-96 rounded-lg border border-gray-200 bg-white shadow-2xl">
+      <div className="fixed bottom-4 right-4 left-4 md:left-auto md:bottom-6 md:right-6 z-50 w-auto md:w-96 rounded-lg border border-gray-200 bg-white shadow-2xl max-w-md">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 p-4">
           <div className="flex items-center gap-2">
