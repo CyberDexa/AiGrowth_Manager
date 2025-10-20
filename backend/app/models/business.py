@@ -42,6 +42,7 @@ class Business(Base):
     images = relationship("Image", back_populates="business", cascade="all, delete-orphan")
     post_analytics = relationship("PostAnalytics", back_populates="business", cascade="all, delete-orphan")
     analytics_summaries = relationship("AnalyticsSummary", back_populates="business", cascade="all, delete-orphan")
+    content_templates = relationship("ContentTemplate", back_populates="business", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Business {self.name}>"
