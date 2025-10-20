@@ -13,7 +13,9 @@ import {
   ArrowDown,
   Lightbulb,
   Calendar as CalendarIcon,
-  Clock
+  Clock,
+  BookmarkPlus,
+  Check
 } from 'lucide-react';
 import {
   LineChart,
@@ -72,6 +74,10 @@ export default function AnalyticsPage() {
   const [platforms, setPlatforms] = useState<Record<string, any>>({});
   const [trends, setTrends] = useState<any[]>([]);
   const [insights, setInsights] = useState<any>(null);
+  
+  // Save to library state
+  const [savingPostId, setSavingPostId] = useState<number | null>(null);
+  const [savedPosts, setSavedPosts] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     loadBusinesses();
@@ -191,6 +197,43 @@ export default function AnalyticsPage() {
       console.error('Failed to load analytics:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const saveToLibrary = async (postId: number) => {
+    if (!selectedBusiness || savingPostId) return;
+    
+    setSavingPostId(postId);
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/content-library/save`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            source: 'published_post',
+            item_id: postId
+          })
+        }
+      );
+
+      if (response.ok) {
+        setSavedPosts(prev => new Set([...prev, postId]));
+      } else {
+        const error = await response.json();
+        alert(`Failed to save: ${error.detail || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Failed to save to library:', error);
+      alert('Failed to save to library');
+    } finally {
+      setSavingPostId(null);
     }
   };
 
@@ -410,6 +453,9 @@ export default function AnalyticsPage() {
                       <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                         Rate
                       </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
@@ -442,6 +488,34 @@ export default function AnalyticsPage() {
                           </td>
                           <td className="px-6 py-4 text-sm font-semibold text-gray-900">
                             {content.engagement_rate.toFixed(1)}%
+                          </td>
+                          <td className="px-6 py-4">
+                            <button
+                              onClick={() => saveToLibrary(content.id)}
+                              disabled={savingPostId === content.id || savedPosts.has(content.id)}
+                              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                                savedPosts.has(content.id)
+                                  ? 'bg-green-100 text-green-700 cursor-default'
+                                  : 'bg-blue-50 text-blue-700 hover:bg-blue-100 disabled:opacity-50'
+                              }`}
+                            >
+                              {savingPostId === content.id ? (
+                                <>
+                                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                  Saving...
+                                </>
+                              ) : savedPosts.has(content.id) ? (
+                                <>
+                                  <Check className="w-4 h-4" />
+                                  Saved
+                                </>
+                              ) : (
+                                <>
+                                  <BookmarkPlus className="w-4 h-4" />
+                                  Save
+                                </>
+                              )}
+                            </button>
                           </td>
                         </tr>
                       ))
