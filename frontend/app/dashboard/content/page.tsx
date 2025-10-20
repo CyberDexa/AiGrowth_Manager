@@ -7,6 +7,7 @@ import { Pencil, Trash2, Calendar, Copy, CheckCircle, Send, BookmarkPlus, Check 
 import CalendarView from '@/components/CalendarView';
 import PublishContentModal from '../strategies/components/PublishContentModal';
 import { useOnboarding } from '@/contexts/OnboardingContext';
+import toast from 'react-hot-toast';
 
 interface ContentItem {
   id: number;
@@ -87,12 +88,26 @@ export default function ContentPage() {
     try {
       setLoading(true);
       const token = await getToken();
-      if (!token) return;
+      if (!token) {
+        console.warn('No authentication token available');
+        return;
+      }
       
       const data = await api.content.list({ business_id: selectedBusiness }, token);
       setContent(data);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to load content:', err);
+      
+      // Show user-friendly error message
+      const errorMessage = err?.message || 'Failed to connect to backend';
+      if (errorMessage.includes('timeout') || errorMessage.includes('cold start')) {
+        toast.error('Backend is starting up. Please wait 30 seconds and refresh the page.');
+      } else if (errorMessage.includes('Failed to fetch')) {
+        toast.error('Unable to connect to backend. Please check your internet connection.');
+      }
+      
+      // Set empty array as fallback to prevent page crash
+      setContent([]);
     } finally {
       setLoading(false);
     }
