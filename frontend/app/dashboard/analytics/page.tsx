@@ -5,6 +5,7 @@ import { useAuth } from '@clerk/nextjs';
 import api from '@/lib/api';
 import SyncStatus from '@/app/components/SyncStatus';
 import PostingInsights from '@/components/PostingInsights';
+import HelpIcon from '@/components/HelpIcon';
 import toast from 'react-hot-toast';
 import { DashboardSkeleton } from '@/components/Skeletons';
 import PageErrorBoundary from '@/components/PageErrorBoundary';
@@ -320,12 +321,15 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <p className="text-sm font-medium text-gray-600">Total Posts</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-gray-600">Total Posts</p>
+                    <HelpIcon content="Total number of posts published across all your connected social media platforms" />
+                  </div>
                   <p className="mt-2 text-3xl font-bold text-gray-900">
                     {overview?.total_posts || 0}
                   </p>
                   <p className="mt-2 text-sm text-gray-500">
-                    Last {timeRange} days
+                    Published content
                   </p>
                 </div>
               </div>
@@ -338,7 +342,10 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <p className="text-sm font-medium text-gray-600">Total Reach</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-gray-600">Total Reach</p>
+                    <HelpIcon content="Total number of unique users who saw your content across all platforms" />
+                  </div>
                   <p className="mt-2 text-3xl font-bold text-gray-900">
                     {formatNumber(overview?.total_reach || 0)}
                   </p>
@@ -356,7 +363,10 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <p className="text-sm font-medium text-gray-600">Avg Engagement</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-gray-600">Avg Engagement</p>
+                    <HelpIcon content="Average percentage of people who interacted with your posts (likes, comments, shares) compared to total reach" />
+                  </div>
                   <p className="mt-2 text-3xl font-bold text-gray-900">
                     {overview?.avg_engagement_rate?.toFixed(1) || 0}%
                   </p>
@@ -374,7 +384,10 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <p className="text-sm font-medium text-gray-600">Growth Rate</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-gray-600">Growth Rate</p>
+                    <HelpIcon content="Percentage change in your total reach and engagement compared to the previous time period" />
+                  </div>
                   <p className="mt-2 flex items-center text-3xl font-bold text-gray-900">
                     {overview?.growth_rate && overview.growth_rate > 0 ? '+' : ''}
                     {overview?.growth_rate?.toFixed(1) || 0}%

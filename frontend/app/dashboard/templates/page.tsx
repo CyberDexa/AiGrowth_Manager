@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { Plus, Pencil, Trash2, Copy, FileText, Sparkles } from 'lucide-react';
+import HelpIcon from '@/components/HelpIcon';
 
 interface Template {
   id: number;
@@ -442,9 +443,15 @@ export default function TemplatesPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Template Structure *
-                </label>
+                <div className="mb-1 flex items-center gap-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Template Structure *
+                  </label>
+                  <HelpIcon 
+                    content="Use {{variable_name}} syntax to create dynamic placeholders. Example: {{product_name}}, {{benefit}}, {{price}}. These will be filled in when you use the template."
+                    side="right"
+                  />
+                </div>
                 <p className="mb-2 text-xs text-gray-600">
                   Use {`{{placeholder_name}}`} for variables (e.g., {`{{product_name}}`}, {`{{benefit}}`})
                 </p>
