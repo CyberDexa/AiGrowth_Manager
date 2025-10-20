@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { Settings, User, Building2, Bell, Lock, Palette, Trash2, Save, CheckCircle2, Share2 } from 'lucide-react';
 import SocialConnections from './components/SocialConnections';
+import toast from 'react-hot-toast';
 
 interface Business {
   id: number;
@@ -120,9 +121,9 @@ export default function SettingsPage() {
         
         // Show user-friendly error for timeout
         if (error.name === 'AbortError') {
-          alert('⏰ Backend service is starting up (cold start). Please wait 30 seconds and refresh the page.');
+          toast.loading('Backend service is starting up. Please wait 30 seconds...', { duration: 30000 });
         } else if (error.message === 'Failed to fetch') {
-          alert('❌ Cannot connect to backend. Please check:\n1. Backend is running at ' + process.env.NEXT_PUBLIC_API_URL + '\n2. Check browser console for CORS errors\n3. Try refreshing in 30 seconds (cold start)');
+          toast.error('Cannot connect to backend. Please check console for details.');
         }
       }
     } finally {
@@ -133,7 +134,7 @@ export default function SettingsPage() {
   const handleSaveBusiness = async () => {
     // Validate required fields
     if (!businessForm.name.trim()) {
-      alert('Please enter a business name');
+      toast.error('Please enter a business name');
       return;
     }
 
@@ -167,16 +168,17 @@ export default function SettingsPage() {
 
       if (response.ok) {
         setSaved(true);
+        toast.success('Business settings saved successfully!');
         await loadBusinesses();
         setTimeout(() => setSaved(false), 3000);
       } else {
         const errorData = await response.json().catch(() => ({}));
         console.error('Failed to save:', response.statusText, errorData);
-        alert(`Failed to save business: ${errorData.detail || response.statusText}`);
+        toast.error(`Failed to save business: ${errorData.detail || response.statusText}`);
       }
     } catch (error) {
       console.error('Failed to save business:', error);
-      alert('Failed to save business. Please try again.');
+      toast.error('Failed to save business. Please try again.');
     } finally {
       setSaving(false);
     }

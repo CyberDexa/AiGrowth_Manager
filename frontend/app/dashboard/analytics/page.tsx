@@ -5,6 +5,7 @@ import { useAuth } from '@clerk/nextjs';
 import api from '@/lib/api';
 import SyncStatus from '@/app/components/SyncStatus';
 import PostingInsights from '@/components/PostingInsights';
+import toast from 'react-hot-toast';
 import { 
   TrendingUp, 
   Users, 
@@ -226,13 +227,14 @@ export default function AnalyticsPage() {
 
       if (response.ok) {
         setSavedPosts(prev => new Set([...prev, postId]));
+        toast.success('Content saved to library!');
       } else {
         const error = await response.json();
-        alert(`Failed to save: ${error.detail || 'Unknown error'}`);
+        toast.error(`Failed to save: ${error.detail || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Failed to save to library:', error);
-      alert('Failed to save to library');
+      toast.error('Failed to save to library');
     } finally {
       setSavingPostId(null);
     }

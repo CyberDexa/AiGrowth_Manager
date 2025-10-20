@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { Linkedin, Twitter, Facebook, CheckCircle2, XCircle, ExternalLink, Loader2 } from 'lucide-react';
 import { useOnboarding } from '@/contexts/OnboardingContext';
+import toast from 'react-hot-toast';
 
 interface SocialAccount {
   id: number;
@@ -68,7 +69,7 @@ export default function SocialConnections({ businessId }: SocialConnectionsProps
     
     if (!businessId) {
       console.error('❌ No business ID available');
-      alert('Please create a business first');
+      toast.error('Please create a business first');
       return;
     }
 
@@ -103,7 +104,7 @@ export default function SocialConnections({ businessId }: SocialConnectionsProps
     } catch (error) {
       console.error('Failed to initiate OAuth:', error);
       setConnecting(null);
-      alert('Failed to connect. Please try again.');
+      toast.error('Failed to connect. Please try again.');
     }
   };
 
@@ -128,13 +129,14 @@ export default function SocialConnections({ businessId }: SocialConnectionsProps
       );
 
       if (response.ok) {
+        toast.success('Account disconnected successfully');
         await loadAccounts();
       } else {
-        alert('Failed to disconnect account');
+        toast.error('Failed to disconnect account');
       }
     } catch (error) {
       console.error('Failed to disconnect:', error);
-      alert('Failed to disconnect account');
+      toast.error('Failed to disconnect account');
     }
   };
 
