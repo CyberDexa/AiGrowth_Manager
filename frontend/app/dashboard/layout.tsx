@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { BarChart3, BookmarkPlus, Calendar, FileText, Home, Settings, Target, Layers, Menu, X } from 'lucide-react';
 import { OnboardingProvider } from '@/contexts/OnboardingContext';
 import OnboardingChecklist from '@/components/OnboardingChecklist';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export default function DashboardLayout({
   children,
@@ -28,8 +29,9 @@ export default function DashboardLayout({
   ];
 
   return (
-    <OnboardingProvider>
-      <div className="flex min-h-screen bg-gray-50">
+    <ErrorBoundary>
+      <OnboardingProvider>
+        <div className="flex min-h-screen bg-gray-50">
         {/* Mobile Sidebar Overlay */}
         {mobileMenuOpen && (
           <div 
@@ -104,5 +106,6 @@ export default function DashboardLayout({
       {/* Onboarding Checklist */}
       <OnboardingChecklist />
     </OnboardingProvider>
+    </ErrorBoundary>
   );
 }

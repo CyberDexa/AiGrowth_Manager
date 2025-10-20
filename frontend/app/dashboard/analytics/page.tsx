@@ -6,6 +6,8 @@ import api from '@/lib/api';
 import SyncStatus from '@/app/components/SyncStatus';
 import PostingInsights from '@/components/PostingInsights';
 import toast from 'react-hot-toast';
+import { DashboardSkeleton } from '@/components/Skeletons';
+import PageErrorBoundary from '@/components/PageErrorBoundary';
 import { 
   TrendingUp, 
   Users, 
@@ -254,8 +256,9 @@ export default function AnalyticsPage() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mx-auto max-w-7xl">
+    <PageErrorBoundary pageName="Analytics">
+      <div className="p-6">
+        <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
@@ -304,10 +307,7 @@ export default function AnalyticsPage() {
         )}
 
         {loading && !overview ? (
-          <div className="text-center py-12">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-            <p className="mt-4 text-gray-600">Loading analytics...</p>
-          </div>
+          <DashboardSkeleton />
         ) : (
           <>
             {/* Overview Cards */}
@@ -610,5 +610,6 @@ export default function AnalyticsPage() {
         )}
       </div>
     </div>
+    </PageErrorBoundary>
   );
 }
