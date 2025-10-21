@@ -4,6 +4,8 @@
 
 Since Render free tier doesn't have Shell access, I've implemented **automatic migrations** that run when the backend starts.
 
+**Updated:** Now migrates both `content` and `published_posts` tables to fix analytics sync errors.
+
 ---
 
 ## ✅ What I Did
@@ -12,10 +14,10 @@ Since Render free tier doesn't have Shell access, I've implemented **automatic m
 **File:** `backend/app/db/migrations.py`
 
 This script:
-- ✅ Checks if `saved_to_library` column exists
-- ✅ Checks if `library_saved_at` column exists
-- ✅ Adds them if missing
-- ✅ Creates necessary indexes
+- ✅ Checks both `content` and `published_posts` tables
+- ✅ Adds `saved_to_library` column if missing
+- ✅ Adds `library_saved_at` column if missing
+- ✅ Creates necessary indexes on both tables
 - ✅ Safe to run multiple times (won't duplicate columns)
 
 ### 2. Updated Startup Process
