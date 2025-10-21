@@ -14,12 +14,13 @@ from app.db.database import engine, get_db
 from app.core.config import settings
 
 def run_migration():
-    """Add content library columns to content table"""
+    """Add content library columns to content and published_posts tables"""
     
     print("🔧 Starting database migration...")
     print(f"📍 Database: {settings.DATABASE_URL.split('@')[-1] if '@' in settings.DATABASE_URL else 'local'}")
     
     migration_sql = """
+    -- CONTENT TABLE
     -- Add saved_to_library column
     ALTER TABLE content 
     ADD COLUMN IF NOT EXISTS saved_to_library BOOLEAN NOT NULL DEFAULT FALSE;
@@ -35,6 +36,23 @@ def run_migration():
     UPDATE content 
     SET saved_to_library = FALSE 
     WHERE saved_to_library IS NULL;
+    
+    -- PUBLISHED_POSTS TABLE
+    -- Add saved_to_library column
+    ALTER TABLE published_posts 
+    ADD COLUMN IF NOT EXISTS saved_to_library BOOLEAN NOT NULL DEFAULT FALSE;
+    
+    -- Add index on saved_to_library for performance
+    CREATE INDEX IF NOT EXISTS ix_published_posts_saved_to_library ON published_posts(saved_to_library);
+    
+    -- Add library_saved_at column
+    ALTER TABLE published_posts 
+    ADD COLUMN IF NOT EXISTS library_saved_at TIMESTAMP;
+    
+    -- Update existing records
+    UPDATE published_posts 
+    SET saved_to_library = FALSE 
+    WHERE saved_to_library IS NULL;
     """
     
     try:
@@ -48,27 +66,31 @@ def run_migration():
             
             print("✅ Migration completed successfully!")
             
-            # Verify columns exist
+            # Verify columns exist in both tables
             verification_sql = """
-            SELECT column_name, data_type, is_nullable, column_default
+            SELECT table_name, column_name, data_type, is_nullable, column_default
             FROM information_schema.columns
-            WHERE table_name = 'content' 
+            WHERE table_name IN ('content', 'published_posts')
               AND column_name IN ('saved_to_library', 'library_saved_at')
-            ORDER BY ordinal_position;
+            ORDER BY table_name, ordinal_position;
             """
             
             result = connection.execute(text(verification_sql))
             columns = result.fetchall()
             
             print("\n📊 Verification - Columns added:")
+            current_table = None
             for col in columns:
-                print(f"  - {col[0]}: {col[1]} (nullable: {col[2]}, default: {col[3]})")
+                if col[0] != current_table:
+                    current_table = col[0]
+                    print(f"\n  {current_table}:")
+                print(f"    - {col[1]}: {col[2]} (nullable: {col[3]}, default: {col[4]})")
             
-            if len(columns) == 2:
-                print("\n✅ All columns verified successfully!")
+            if len(columns) == 4:  # 2 columns x 2 tables
+                print("\n✅ All columns verified successfully in both tables!")
                 return True
             else:
-                print(f"\n⚠️  Warning: Expected 2 columns, found {len(columns)}")
+                print(f"\n⚠️  Warning: Expected 4 columns (2 per table), found {len(columns)}")
                 return False
                 
     except Exception as e:
