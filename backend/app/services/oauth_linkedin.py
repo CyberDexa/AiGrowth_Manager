@@ -31,14 +31,15 @@ class LinkedInOAuthService:
     ME_URL = "https://api.linkedin.com/v2/me"
     ORGANIZATIONS_URL = "https://api.linkedin.com/v2/organizationalEntityAcls"
     
-    # OAuth scopes needed for posting and profile access
+    # OAuth scopes - Start with basic scopes that don't require LinkedIn review
+    # Note: w_member_social, r_organization_social, w_organization_social require LinkedIn app verification
     SCOPES = [
         "openid",           # Basic authentication
         "profile",          # Access to profile information
         "email",            # Access to email address
-        "w_member_social",  # Permission to post on behalf of user
-        "r_organization_social",  # Read organization posts
-        "w_organization_social",  # Post as organization
+        # "w_member_social",  # Permission to post on behalf of user (requires verification)
+        # "r_organization_social",  # Read organization posts (requires verification)
+        # "w_organization_social",  # Post as organization (requires verification)
     ]
     
     def __init__(self):
