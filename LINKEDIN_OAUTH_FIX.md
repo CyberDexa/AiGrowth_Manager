@@ -98,8 +98,8 @@ LINKEDIN_REDIRECT_URI=http://localhost:8000/api/v1/oauth/linkedin/callback
 Make sure these environment variables are set in Render:
 
 ```bash
-LINKEDIN_CLIENT_ID=77ftqu4rb7v7r2
-LINKEDIN_CLIENT_SECRET=WPL_AP1.CCloyusyw63HWeMD.90tdnA==
+LINKEDIN_CLIENT_ID=your_linkedin_client_id
+LINKEDIN_CLIENT_SECRET=your_linkedin_client_secret
 LINKEDIN_REDIRECT_URI=https://ai-growth-manager.onrender.com/api/v1/oauth/linkedin/callback
 ```
 

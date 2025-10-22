@@ -74,8 +74,8 @@ Check if Render has the variables:
 2. Click your backend service
 3. Go to **Environment** tab
 4. Verify these exist:
-   - `LINKEDIN_CLIENT_ID=77ftqu4rb7v7r2`
-   - `LINKEDIN_CLIENT_SECRET=WPL_AP1.CCloyusyw63HWeMD.90tdnA==`
+   - `LINKEDIN_CLIENT_ID` (your LinkedIn app client ID)
+   - `LINKEDIN_CLIENT_SECRET` (your LinkedIn app client secret)
    - `LINKEDIN_REDIRECT_URI=https://ai-growth-manager.onrender.com/api/v1/oauth/linkedin/callback`
 
 ### Test 2: Check Backend Logs
