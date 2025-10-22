@@ -31,12 +31,15 @@ class LinkedInOAuthService:
     ME_URL = "https://api.linkedin.com/v2/me"
     ORGANIZATIONS_URL = "https://api.linkedin.com/v2/organizationalEntityAcls"
     
-    # OAuth scopes - Start with basic scopes that don't require LinkedIn review
-    # Note: w_member_social, r_organization_social, w_organization_social require LinkedIn app verification
+    # OAuth scopes - Using legacy scopes that work without additional products
+    # OpenID Connect scopes (openid, profile, email) require "Sign In with LinkedIn using OpenID Connect" product
+    # Legacy scopes work immediately with any LinkedIn app
     SCOPES = [
-        "openid",           # Basic authentication
-        "profile",          # Access to profile information
-        "email",            # Access to email address
+        "r_liteprofile",    # Legacy: Basic profile info (name, picture)
+        "r_emailaddress",   # Legacy: Email address
+        # "openid",           # Requires "Sign In with LinkedIn using OpenID Connect" product
+        # "profile",          # Requires "Sign In with LinkedIn using OpenID Connect" product
+        # "email",            # Requires "Sign In with LinkedIn using OpenID Connect" product
         # "w_member_social",  # Permission to post on behalf of user (requires verification)
         # "r_organization_social",  # Read organization posts (requires verification)
         # "w_organization_social",  # Post as organization (requires verification)
@@ -132,13 +135,14 @@ class LinkedInOAuthService:
     async def get_user_profile(self, access_token: str) -> Dict:
         """
         Fetch user profile information using access token.
+        Uses legacy endpoints for r_liteprofile and r_emailaddress scopes.
         
         Args:
             access_token: LinkedIn access token
             
         Returns:
             Dict containing user profile data:
-            - sub: LinkedIn user ID
+            - sub: LinkedIn user ID  
             - name: Full name
             - given_name: First name
             - family_name: Last name
@@ -155,12 +159,36 @@ class LinkedInOAuthService:
         
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    self.PROFILE_URL,
+                # Fetch basic profile using legacy API
+                profile_response = await client.get(
+                    self.ME_URL,
                     headers=headers
                 )
-                response.raise_for_status()
-                profile = response.json()
+                profile_response.raise_for_status()
+                profile_data = profile_response.json()
+                
+                # Fetch email separately
+                email_response = await client.get(
+                    "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))",
+                    headers=headers
+                )
+                email_response.raise_for_status()
+                email_data = email_response.json()
+                
+                # Extract email
+                email = None
+                if "elements" in email_data and len(email_data["elements"]) > 0:
+                    email = email_data["elements"][0].get("handle~", {}).get("emailAddress")
+                
+                # Format profile data to match OpenID Connect format
+                profile = {
+                    "sub": profile_data.get("id"),  # User ID
+                    "name": f"{profile_data.get('localizedFirstName', '')} {profile_data.get('localizedLastName', '')}".strip(),
+                    "given_name": profile_data.get("localizedFirstName"),
+                    "family_name": profile_data.get("localizedLastName"),
+                    "email": email,
+                    "picture": None  # Profile picture requires additional API call
+                }
                 
                 logger.info(f"Successfully fetched LinkedIn profile for user: {profile.get('sub', 'unknown')}")
                 return profile
