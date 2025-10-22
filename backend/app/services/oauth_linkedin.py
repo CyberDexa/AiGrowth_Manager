@@ -31,12 +31,12 @@ class LinkedInOAuthService:
     ME_URL = "https://api.linkedin.com/v2/me"
     ORGANIZATIONS_URL = "https://api.linkedin.com/v2/organizationalEntityAcls"
     
-    # OAuth scopes - Using legacy scopes that work without additional products
-    # OpenID Connect scopes (openid, profile, email) require "Sign In with LinkedIn using OpenID Connect" product
-    # Legacy scopes work immediately with any LinkedIn app
+    # OAuth scopes - Minimal scope that should work with any LinkedIn app
+    # Even r_emailaddress requires "Sign In with LinkedIn" product
+    # Using only r_liteprofile which is the most basic scope
     SCOPES = [
-        "r_liteprofile",    # Legacy: Basic profile info (name, picture)
-        "r_emailaddress",   # Legacy: Email address
+        "r_liteprofile",    # Legacy: Basic profile info (name, picture) - Should work without products
+        # "r_emailaddress",   # Legacy: Email address - Requires "Sign In with LinkedIn" product
         # "openid",           # Requires "Sign In with LinkedIn using OpenID Connect" product
         # "profile",          # Requires "Sign In with LinkedIn using OpenID Connect" product
         # "email",            # Requires "Sign In with LinkedIn using OpenID Connect" product
@@ -167,18 +167,20 @@ class LinkedInOAuthService:
                 profile_response.raise_for_status()
                 profile_data = profile_response.json()
                 
-                # Fetch email separately
-                email_response = await client.get(
-                    "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))",
-                    headers=headers
-                )
-                email_response.raise_for_status()
-                email_data = email_response.json()
-                
-                # Extract email
+                # Try to fetch email if we have the scope (will fail gracefully if not)
                 email = None
-                if "elements" in email_data and len(email_data["elements"]) > 0:
-                    email = email_data["elements"][0].get("handle~", {}).get("emailAddress")
+                try:
+                    email_response = await client.get(
+                        "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))",
+                        headers=headers
+                    )
+                    if email_response.status_code == 200:
+                        email_data = email_response.json()
+                        if "elements" in email_data and len(email_data["elements"]) > 0:
+                            email = email_data["elements"][0].get("handle~", {}).get("emailAddress")
+                except Exception as e:
+                    logger.warning(f"Could not fetch email (scope probably not granted): {e}")
+                    # Continue without email - it's optional
                 
                 # Format profile data to match OpenID Connect format
                 profile = {
@@ -186,7 +188,7 @@ class LinkedInOAuthService:
                     "name": f"{profile_data.get('localizedFirstName', '')} {profile_data.get('localizedLastName', '')}".strip(),
                     "given_name": profile_data.get("localizedFirstName"),
                     "family_name": profile_data.get("localizedLastName"),
-                    "email": email,
+                    "email": email,  # May be None if scope not granted
                     "picture": None  # Profile picture requires additional API call
                 }
                 
