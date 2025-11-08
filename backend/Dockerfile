@@ -24,4 +24,4 @@ RUN chmod +x start.sh
 EXPOSE 8080
 
 # Use startup script that runs migrations then starts server
-CMD ["./start.sh"]
+CMD ["/bin/bash", "./start.sh"]
