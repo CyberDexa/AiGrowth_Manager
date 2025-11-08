@@ -71,8 +71,9 @@ export default function SyncStatus({ businessId, apiToken }: SyncStatusProps) {
         throw new Error('No authentication token available');
       }
       
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8003';
       const response = await fetch(
-        `http://localhost:8003/api/v1/analytics/sync-status/${businessId}`,
+        `${apiUrl}/api/v1/analytics/sync-status/${businessId}`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -101,8 +102,9 @@ export default function SyncStatus({ businessId, apiToken }: SyncStatusProps) {
         throw new Error('No authentication token available');
       }
       
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8003';
       const response = await fetch(
-        `http://localhost:8003/api/v1/scheduler/trigger/${businessId}`,
+        `${apiUrl}/api/v1/scheduler/trigger/${businessId}`,
         {
           method: 'POST',
           headers: {

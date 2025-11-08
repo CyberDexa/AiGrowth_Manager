@@ -63,7 +63,8 @@ export default function ImageLibrary({
         params.append('ai_generated', filterAI.toString());
       }
 
-      const response = await fetch(`http://localhost:8003/api/v1/images?${params}`);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8003';
+      const response = await fetch(`${apiUrl}/api/v1/images?${params}`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch images');
@@ -91,8 +92,9 @@ export default function ImageLibrary({
     }
 
     try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8003';
       const response = await fetch(
-        `http://localhost:8003/api/v1/images/${imageId}`,
+        `${apiUrl}/api/v1/images/${imageId}`,
         { method: 'DELETE' }
       );
 

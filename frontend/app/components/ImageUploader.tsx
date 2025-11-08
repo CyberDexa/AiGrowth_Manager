@@ -75,8 +75,9 @@ export default function ImageUploader({
       const formData = new FormData();
       formData.append('file', file);
 
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8003';
       const response = await fetch(
-        `http://localhost:8003/api/v1/images/upload?business_id=${businessId}`,
+        `${apiUrl}/api/v1/images/upload?business_id=${businessId}`,
         {
           method: 'POST',
           body: formData,
