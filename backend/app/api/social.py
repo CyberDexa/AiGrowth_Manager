@@ -615,6 +615,27 @@ async def meta_auth_callback(
         )
 
 
+@router.get("/meta/pages")
+async def get_meta_pages(
+    temp_state: str = Query(..., description="Temporary state token"),
+    user_data: dict = Depends(get_current_user)
+):
+    """
+    Get list of Facebook Pages for user to select from
+    
+    Called after OAuth callback redirects to frontend
+    """
+    # Retrieve temp data (but don't pop it yet - we need it for select-page)
+    temp_data = _pkce_state_store.get(temp_state)
+    if not temp_data:
+        raise HTTPException(status_code=400, detail="Invalid or expired state. Please reconnect Facebook.")
+    
+    return {
+        "pages": temp_data.get("pages", []),
+        "user_name": temp_data.get("user_name")
+    }
+
+
 @router.post("/meta/select-page")
 async def meta_select_page(
     page_id: str,
@@ -764,10 +785,10 @@ async def meta_disconnect(
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     
-    # Find Facebook account
+    # Find Facebook/Meta account (handle both platform names)
     account = db.query(SocialAccount).filter(
         SocialAccount.business_id == business_id,
-        SocialAccount.platform == "facebook"
+        SocialAccount.platform.in_(["facebook", "meta"])
     ).first()
     
     if not account:
