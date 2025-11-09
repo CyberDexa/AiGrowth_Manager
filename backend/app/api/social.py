@@ -785,6 +785,15 @@ async def meta_disconnect(
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
     
+    # Find ALL Facebook/Meta accounts (handle both platform names)
+    all_accounts = db.query(SocialAccount).filter(
+        SocialAccount.business_id == business_id
+    ).all()
+    
+    print(f"🔍 All accounts for business {business_id}:")
+    for acc in all_accounts:
+        print(f"  - ID: {acc.id}, Platform: {acc.platform}, Active: {acc.is_active}")
+    
     # Find Facebook/Meta account (handle both platform names)
     account = db.query(SocialAccount).filter(
         SocialAccount.business_id == business_id,
@@ -792,10 +801,16 @@ async def meta_disconnect(
     ).first()
     
     if not account:
+        print(f"❌ No Meta/Facebook account found for business {business_id}")
         raise HTTPException(status_code=404, detail="Meta account not connected")
+    
+    print(f"✅ Found account to disconnect: ID={account.id}, Platform={account.platform}")
     
     # Soft delete - mark as inactive
     account.is_active = False
     db.commit()
+    db.refresh(account)
     
-    return {"message": "Meta account disconnected successfully"}
+    print(f"✅ Account marked as inactive: {account.is_active}")
+    
+    return {"message": "Meta account disconnected successfully", "account_id": account.id}
